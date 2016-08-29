@@ -1,0 +1,40 @@
+{
+  "name": "Peddler",
+  "title": "Data Generation for .NET",
+  "version": "0.2.0",
+  "authors": [ "Brian Caruso <brian@invioinc.com>" ],
+
+  "packOptions": {
+    "summary": "Data Generation for .NET",
+    "tags": [ "dependencyinjection", "di" ],
+    "owners": [ "Invio, Incorporated" ],
+    "licenseUrl": "https://github.com/invio/Peddler/blob/master/LICENSE.txt",
+    "projectUrl": "https://github.com/invio/Peddler/",
+    "requireLicenseAcceptance": false,
+    "repository": {
+      "type": "git",
+      "url": "git@github.com:invio/Peddler"
+    }
+  },
+
+  "buildOptions": {
+    "debugType": "portable"
+  },
+
+  "dependencies": {
+    "Microsoft.NETCore.App": {
+      "version": "1.0.0",
+      "type": "platform"
+    }
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": [
+        "dotnet5.6",
+        "portable-net45+win8"
+      ]
+    }
+  }
+
+}

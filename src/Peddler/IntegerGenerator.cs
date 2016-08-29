@@ -15,9 +15,9 @@ namespace Peddler {
             this(low, Int32.MaxValue) {}
 
         public IntegerGenerator(int low, int high) {
-            if (this.low < this.high) {
+            if (low >= high) {
                 throw new ArgumentException(
-                    $"The '{nameof(low)}' argument ({low:N0}) cannot be greater " +
+                    $"The '{nameof(low)}' argument ({low:N0}) must be lower " +
                     $"than the '{nameof(high)}' argument ({high:N0}).",
                     nameof(low)
                 );

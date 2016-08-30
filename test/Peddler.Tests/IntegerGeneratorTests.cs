@@ -68,6 +68,32 @@ namespace Peddler {
             }
         }
 
+        [Theory]
+        [InlineData(Int32.MinValue, Int32.MaxValue)]
+        [InlineData(0, 2)]
+        public void NextDistinct_NeverGetSameValue(int low, int high) {
+            var generator = new IntegerGenerator(low, high);
+            var previousValue = generator.Next();
+
+            for (var attempt = 0; attempt < NUMBER_OF_ATTEMPTS; attempt++) {
+                var nextValue = generator.NextDistinct(previousValue);
+                Assert.NotEqual(previousValue, nextValue);
+                previousValue = nextValue;
+            }
+        }
+
+        [Fact]
+        public void NextDistinct_ThrowOnConstantGenerator() {
+            // With these arguments, IntegerGenerator can only generate '0'
+            var generator = new IntegerGenerator(0, 1);
+            var value = generator.Next();
+
+            Assert.Throws<UnableToGenerateValueException>(
+                () => generator.NextDistinct(value)
+            );
+        }
+
+
     }
 
 

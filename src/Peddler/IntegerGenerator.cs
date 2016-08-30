@@ -36,10 +36,12 @@ namespace Peddler {
                 return this.Next();
             }
 
-            if (this.low == this.high) {
-                throw new InvalidOperationException(
-                    $"The '{nameof(low)}' boundary and '{nameof(high)}' boundary " +
-                    $"are both '{low:N0}', so a distinct value cannot be generated."
+            if (this.low == this.high - 1) {
+                throw new UnableToGenerateValueException(
+                    $"Since '{nameof(low)}' is {this.low:N0} and '{nameof(high)}' is " +
+                    $"{this.high:N0}, only {this.low:N0} can be generated. The value " +
+                    $"provided for '{nameof(other)}' was also {other:N0}, so a " +
+                    $"distinct value cannot be generated."
                 );
             }
 

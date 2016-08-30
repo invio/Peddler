@@ -2,11 +2,11 @@ using System;
 
 namespace Peddler {
 
-    public class IntegerGenerator : IDistinctGenerator<int> {
+    public class IntegerGenerator : IDistinctGenerator<int>, IComparableGenerator<int> {
 
         private Random random { get; } = new Random();
-        private int low { get; }
-        private int high { get; }
+        public int Low { get; }
+        public int High { get; }
 
         public IntegerGenerator() :
             this(0, Int32.MaxValue) {}
@@ -23,25 +23,26 @@ namespace Peddler {
                 );
             }
 
-            this.low = low;
-            this.high = high;
+            this.Low = low;
+            this.High = high;
         }
 
         public int Next() {
-            return this.random.Next(this.low, this.high);
+            return this.random.Next(this.Low, this.High);
         }
 
         public int NextDistinct(int other) {
-            if (other < this.low || other >= this.high) {
+            if (other < this.Low || other >= this.High) {
                 return this.Next();
             }
 
-            if (this.low == this.high - 1) {
+            if (this.Low == this.High - 1) {
                 throw new UnableToGenerateValueException(
-                    $"Since '{nameof(low)}' is {this.low:N0} and '{nameof(high)}' is " +
-                    $"{this.high:N0}, only {this.low:N0} can be generated. The value " +
+                    $"Since '{nameof(this.Low)}' is {this.Low:N0} and '{nameof(this.High)}' " +
+                    $"is {this.High:N0}, only {this.Low:N0} can be generated. The value " +
                     $"provided for '{nameof(other)}' was also {other:N0}, so a " +
-                    $"distinct value cannot be generated."
+                    $"distinct value cannot be generated.",
+                    nameof(other)
                 );
             }
 
@@ -63,13 +64,85 @@ namespace Peddler {
             // result if it is equal to or greater to '3', our range becomes [ 1, 2, 4, 5 ].
             // This gives us a perfectly balanced range of possibilities.
 
-            var nextValue = this.random.Next(this.low, this.high - 1);
+            var nextValue = this.random.Next(this.Low, this.High - 1);
 
             if (nextValue >= other) {
                 nextValue++;
             }
 
             return nextValue;
+        }
+
+        public int NextGreaterThan(int other) {
+            if (other < this.Low) {
+                return this.Next();
+            }
+
+            if (other >= this.High - 1) {
+                throw new UnableToGenerateValueException(
+                    $"Since '{nameof(this.High)}' is {this.High:N0}, the maximum value that " +
+                    $"can be generated is {(this.High - 1):N0}. Since the value provided for " +
+                    $"'{nameof(other)}' was {other:N0}, a value greater than it cannot be " +
+                    $"provided by this {this.GetType().Name}.",
+                    nameof(other)
+                );
+            }
+
+            return this.random.Next(other + 1, this.High);
+        }
+
+        public int NextGreaterThanOrEqualTo(int other) {
+            if (other < this.Low) {
+                return this.Next();
+            }
+
+            if (other >= this.High) {
+                throw new UnableToGenerateValueException(
+                    $"Since '{nameof(this.High)}' is {this.High:N0}, the maximum value that " +
+                    $"can be generated is {(this.High - 1):N0}. Since the value provided for " +
+                    $"'{nameof(other)}' was {other:N0}, a value greater than or equal to it " +
+                    $"cannot be provided by this {this.GetType().Name}.",
+                    nameof(other)
+                );
+            }
+
+            return this.random.Next(other, this.High);
+        }
+
+        public int NextLessThan(int other) {
+            if (other >= this.High) {
+                return this.Next();
+            }
+
+            if (other <= this.Low) {
+                throw new UnableToGenerateValueException(
+                    $"Since '{nameof(this.Low)}' is {this.Low:N0}, the minimum value that " +
+                    $"can be generated is {this.Low:N0}. Since the value provided for " +
+                    $"for '{nameof(other)}' was {other:N0}, a value less than it cannot " +
+                    $"be provided by this {this.GetType().Name}.",
+                    nameof(other)
+                );
+            }
+
+            return this.random.Next(this.Low, other);
+        }
+
+        public int NextLessThanOrEqualTo(int other) {
+            if (other >= this.High) {
+                return this.Next();
+            }
+
+            if (other < this.Low) {
+                throw new UnableToGenerateValueException(
+                    $"Since '{nameof(this.Low)}' is {this.Low:N0}, the minimum value that " +
+                    $"can be generated is {this.Low:N0}. Since the value provided for " +
+                    $"for '{nameof(other)}' was {other:N0}, a value less than or equal " +
+                    $"to it cannot be provided by this {this.GetType().Name}.",
+                    nameof(other)
+                );
+            }
+
+            return this.random.Next(this.Low, other + 1);
         }
 
     }

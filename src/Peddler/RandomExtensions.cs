@@ -4,6 +4,37 @@ namespace Peddler {
 
     public static class RandomExtensions {
 
+        public static UInt32 NextUInt32(this Random random) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            return random.NextUInt32(0, UInt32.MaxValue);
+        }
+
+        public static UInt32 NextUInt32(this Random random, UInt32 maxValue) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            return random.NextUInt32(0, maxValue);
+        }
+
+        public static UInt32 NextUInt32(this Random random, UInt32 minValue, UInt32 maxValue) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            if (maxValue < 0) {
+                throw new ArgumentOutOfRangeException(
+                    nameof(maxValue),
+                    $"'{nameof(maxValue)}' must be greater than zero."
+                );
+            }
+
+            return (UInt32)random.NextUInt64((UInt64)minValue, (UInt64)maxValue);
+        }
+
         public static Int64 NextInt64(this Random random) {
             if (random == null) {
                 throw new ArgumentNullException(nameof(random));

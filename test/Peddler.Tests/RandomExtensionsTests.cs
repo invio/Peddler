@@ -7,6 +7,107 @@ namespace Peddler {
 
         private const int numberOfAttempts = 100;
 
+        // --- NextUInt32 ---
+
+        [Fact]
+        public void NextUInt32_WithDefaults() {
+            var random = new Random();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextUInt32();
+
+                Assert.True(value >= 0);
+                Assert.True(value < UInt32.MaxValue);
+            }
+        }
+
+        [Fact]
+        public void NextUInt32_WithDefaults_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextUInt32()
+            );
+        }
+
+        [Theory]
+        [InlineData((UInt32)0)]
+        [InlineData((UInt32)1)]
+        [InlineData((UInt32)10)]
+        [InlineData(UInt32.MaxValue)]
+        public void NextUInt32_WithMaxValue(UInt32 maxValue) {
+            var random = new Random();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextUInt32(maxValue);
+
+                if (maxValue == 0) {
+                    // The only situation when 'value' can be equal to 'maxValue'
+                    // is when 'maxValue' is 0. This is identical to how
+                    // Random.Next(int maxValue) operates.
+                    Assert.Equal(maxValue, value);
+                } else {
+                    Assert.True(value >= 0);
+                    Assert.True(value < maxValue);
+                }
+            }
+        }
+
+        [Fact]
+        public void NextUInt32_WithMaxValue_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextUInt32(1)
+            );
+        }
+
+        [Theory]
+        [InlineData((UInt32)0, (UInt32)0)]
+        [InlineData((UInt32)1, (UInt32)1)]
+        [InlineData(UInt32.MaxValue, UInt32.MaxValue)]
+        [InlineData((UInt32)0, (UInt32)100)]
+        [InlineData((UInt32)1, (UInt32)100)]
+        [InlineData((UInt32)0, UInt32.MaxValue)]
+        [InlineData((UInt32)1, UInt32.MaxValue)]
+        [InlineData((UInt32)0x00000000, (UInt32)0x00010000)]
+        [InlineData((UInt32)0x00000000, (UInt32)0x00000001)]
+        public void NextUInt32_WithRange(UInt32 minValue, UInt32 maxValue) {
+            var random = new Random();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextUInt32(minValue, maxValue);
+
+                if (minValue == maxValue) {
+                    // The only situation when 'value' can be equal to 'maxValue'
+                    // is when 'maxValue' is equal to 'minValue'. This is identical
+                    // to how Random.Next(int minValue, maxValue) operates.
+                    Assert.Equal(minValue, value);
+                } else {
+                    Assert.True(value >= minValue);
+                    Assert.True(value < maxValue);
+                }
+            }
+        }
+
+        [Fact]
+        public void NextUInt32_WithRange_MinValueLessThanMaxValue() {
+            var random = new Random();
+
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => random.NextUInt32(10, 1)
+            );
+        }
+
+        [Fact]
+        public void NextUInt32_WithRange_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextUInt32(1, 10)
+            );
+        }
+
         // --- NextInt64 ---
 
         [Fact]

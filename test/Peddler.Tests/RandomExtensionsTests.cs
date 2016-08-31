@@ -7,6 +7,220 @@ namespace Peddler {
 
         private const int numberOfAttempts = 100;
 
+        // --- NextSByte ---
+
+        [Fact]
+        public void NextSByte_WithDefaults() {
+            var random = new Random();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextSByte();
+
+                Assert.True(value >= 0);
+                Assert.True(value < SByte.MaxValue);
+            }
+        }
+
+        [Fact]
+        public void NextSByte_WithDefaults_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextSByte()
+            );
+        }
+
+        [Theory]
+        [InlineData((SByte)0)]
+        [InlineData((SByte)1)]
+        [InlineData((SByte)10)]
+        [InlineData(SByte.MaxValue)]
+        public void NextSByte_WithMaxValue(SByte maxValue) {
+            var random = new Random();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextSByte(maxValue);
+
+                if (maxValue == 0) {
+                    // The only situation when 'value' can be equal to 'maxValue'
+                    // is when 'maxValue' is 0. This is identical to how
+                    // Random.Next(int maxValue) operates.
+                    Assert.Equal(maxValue, value);
+                } else {
+                    Assert.True(value >= 0);
+                    Assert.True(value < maxValue);
+                }
+            }
+        }
+
+        [Fact]
+        public void NextSByte_WithMaxValue_LessThanZero() {
+            var random = new Random();
+
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => random.NextSByte(-1)
+            );
+        }
+
+        [Fact]
+        public void NextSByte_WithMaxValue_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextSByte(1)
+            );
+        }
+
+        [Theory]
+        [InlineData((SByte)0, (SByte)0)]
+        [InlineData((SByte)1, (SByte)1)]
+        [InlineData(SByte.MaxValue, SByte.MaxValue)]
+        [InlineData(SByte.MinValue, SByte.MaxValue)]
+        [InlineData(SByte.MinValue, (SByte)(-1))]
+        [InlineData(SByte.MinValue, (SByte)0)]
+        [InlineData(SByte.MinValue, (SByte)1)]
+        [InlineData((SByte)(-1), (SByte)100)]
+        [InlineData((SByte)0, (SByte)1)]
+        [InlineData((SByte)0, (SByte)100)]
+        [InlineData((SByte)1, (SByte)100)]
+        [InlineData((SByte)0, SByte.MaxValue)]
+        [InlineData((SByte)1, SByte.MaxValue)]
+        public void NextSByte_WithRange(SByte minValue, SByte maxValue) {
+            var random = new Random();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextSByte(minValue, maxValue);
+
+                if (minValue == maxValue) {
+                    // The only situation when 'value' can be equal to 'maxValue'
+                    // is when 'maxValue' is equal to 'minValue'. This is identical
+                    // to how Random.Next(int minValue, maxValue) operates.
+                    Assert.Equal(minValue, value);
+                } else {
+                    Assert.True(value >= minValue);
+                    Assert.True(value < maxValue);
+                }
+            }
+        }
+
+        [Fact]
+        public void NextSByte_WithRange_MinValueLessThanMaxValue() {
+            var random = new Random();
+
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => random.NextSByte(10, 1)
+            );
+        }
+
+        [Fact]
+        public void NextSByte_WithRange_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextSByte(1, 10)
+            );
+        }
+
+        // --- NextByte ---
+
+        [Fact]
+        public void NextByte_WithDefaults() {
+            var random = new Random();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextByte();
+
+                Assert.True(value >= 0);
+                Assert.True(value < Byte.MaxValue);
+            }
+        }
+
+        [Fact]
+        public void NextByte_WithDefaults_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextByte()
+            );
+        }
+
+        [Theory]
+        [InlineData((Byte)0)]
+        [InlineData((Byte)1)]
+        [InlineData((Byte)10)]
+        [InlineData(Byte.MaxValue)]
+        public void NextByte_WithMaxValue(Byte maxValue) {
+            var random = new Random();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextByte(maxValue);
+
+                if (maxValue == 0) {
+                    // The only situation when 'value' can be equal to 'maxValue'
+                    // is when 'maxValue' is 0. This is identical to how
+                    // Random.Next(int maxValue) operates.
+                    Assert.Equal(maxValue, value);
+                } else {
+                    Assert.True(value >= 0);
+                    Assert.True(value < maxValue);
+                }
+            }
+        }
+
+        [Fact]
+        public void NextByte_WithMaxValue_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextByte(1)
+            );
+        }
+
+        [Theory]
+        [InlineData((Byte)0, (Byte)0)]
+        [InlineData((Byte)1, (Byte)1)]
+        [InlineData(Byte.MaxValue, Byte.MaxValue)]
+        [InlineData((Byte)0, (Byte)1)]
+        [InlineData((Byte)0, (Byte)100)]
+        [InlineData((Byte)1, (Byte)100)]
+        [InlineData((Byte)0, Byte.MaxValue)]
+        [InlineData((Byte)1, Byte.MaxValue)]
+        public void NextByte_WithRange(Byte minValue, Byte maxValue) {
+            var random = new Random();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextByte(minValue, maxValue);
+
+                if (minValue == maxValue) {
+                    // The only situation when 'value' can be equal to 'maxValue'
+                    // is when 'maxValue' is equal to 'minValue'. This is identical
+                    // to how Random.Next(int minValue, maxValue) operates.
+                    Assert.Equal(minValue, value);
+                } else {
+                    Assert.True(value >= minValue);
+                    Assert.True(value < maxValue);
+                }
+            }
+        }
+
+        [Fact]
+        public void NextByte_WithRange_MinValueLessThanMaxValue() {
+            var random = new Random();
+
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => random.NextByte(10, 1)
+            );
+        }
+
+        [Fact]
+        public void NextByte_WithRange_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextByte(1, 10)
+            );
+        }
+
         // --- NextInt16 ---
 
         [Fact]

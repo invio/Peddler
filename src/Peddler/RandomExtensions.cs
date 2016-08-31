@@ -4,6 +4,75 @@ namespace Peddler {
 
     public static class RandomExtensions {
 
+        public static SByte NextSByte(this Random random) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            return random.NextSByte(0, SByte.MaxValue);
+        }
+
+        public static SByte NextSByte(this Random random, SByte maxValue) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            if (maxValue < 0) {
+                throw new ArgumentOutOfRangeException(
+                    nameof(maxValue),
+                    $"'{nameof(maxValue)}' must be greater than zero."
+                );
+            }
+
+            return random.NextSByte(0, maxValue);
+        }
+
+        public static SByte NextSByte(this Random random, SByte minValue, SByte maxValue) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            if (minValue > maxValue) {
+                throw new ArgumentOutOfRangeException(
+                    nameof(minValue),
+                    $"'{nameof(minValue)}' cannot be greater than maxValue."
+                );
+            }
+
+            return (SByte)random.Next((Int32)minValue, (Int32)maxValue);
+        }
+
+        public static Byte NextByte(this Random random) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            return random.NextByte(0, Byte.MaxValue);
+        }
+
+        public static Byte NextByte(this Random random, Byte maxValue) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            return random.NextByte(0, maxValue);
+        }
+
+        public static Byte NextByte(this Random random, Byte minValue, Byte maxValue) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            if (minValue > maxValue) {
+                throw new ArgumentOutOfRangeException(
+                    nameof(minValue),
+                    $"'{nameof(minValue)}' cannot be greater than maxValue."
+                );
+            }
+
+            return (Byte)random.Next((Int32)minValue, (Int32)maxValue);
+        }
+
         public static Int16 NextInt16(this Random random) {
             if (random == null) {
                 throw new ArgumentNullException(nameof(random));

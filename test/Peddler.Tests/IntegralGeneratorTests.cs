@@ -31,6 +31,15 @@ namespace Peddler {
 
         private static TIntegral Add(TIntegral value, long amount) {
             checked {
+                // Of all integrals, only UInt64 cannot be converted to Int64
+                if (typeof(TIntegral) == typeof(UInt64)) {
+                    if (amount < 0) {
+                        return ToIntegral(Convert.ToUInt64(value) - (UInt64)Math.Abs(amount));
+                    } else {
+                        return ToIntegral(Convert.ToUInt64(value) + (UInt64)amount);
+                    }
+                }
+
                 return ToIntegral(Convert.ToInt64(value) + amount);
             }
         }
@@ -109,7 +118,7 @@ namespace Peddler {
         public static IEnumerable<object[]> Next_WithLowAndHighDefined_RangeIsBetweenLowAndHigh_Data {
             get {
                 yield return new object[] { minValue, maxValue };
-                yield return new object[] { minValue, ToIntegral(0) };
+                yield return new object[] { minValue, ToIntegral(1) };
                 yield return new object[] { 0, maxValue };
             }
         }
@@ -180,9 +189,9 @@ namespace Peddler {
 
         [Fact]
         public void NextDistinct_OtherLessThanRange() {
-            var generator = this.CreateGenerator(ToIntegral(0), ToIntegral(10));
+            var generator = this.CreateGenerator(ToIntegral(10), ToIntegral(20));
 
-            var other = ToIntegral(-20);
+            var other = ToIntegral(5);
             Assert.True(other.CompareTo(generator.Low) < 0);
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
@@ -219,7 +228,7 @@ namespace Peddler {
             get {
                 yield return new object[] { minValue, maxValue, minValue };
                 yield return new object[] { ToIntegral(0), ToIntegral(2), ToIntegral(0) };
-                yield return new object[] { ToIntegral(0), ToIntegral(10), ToIntegral(-30) };
+                yield return new object[] { ToIntegral(10), ToIntegral(40), ToIntegral(5) };
             }
         }
 
@@ -268,7 +277,7 @@ namespace Peddler {
                 yield return new object[] { ToIntegral(1), ToIntegral(2), ToIntegral(0) };
                 yield return new object[] { ToIntegral(0), ToIntegral(10), ToIntegral(9) };
                 yield return new object[] { minValue, maxValue, minValue };
-                yield return new object[] { ToIntegral(0), ToIntegral(10), ToIntegral(-30) };
+                yield return new object[] { ToIntegral(50), ToIntegral(100), ToIntegral(30) };
             }
         }
 
@@ -340,8 +349,8 @@ namespace Peddler {
 
         public static IEnumerable<object[]> NextLessThanOrEqualTo_ThrowOnLessThanMinValue_Data {
             get {
-                yield return new object[] { ToIntegral(1), ToIntegral(2), ToIntegral(-10) };
-                yield return new object[] { ToIntegral(0), ToIntegral(10), ToIntegral(-1) };
+                yield return new object[] { ToIntegral(10), ToIntegral(20), ToIntegral(0) };
+                yield return new object[] { ToIntegral(30), ToIntegral(50), ToIntegral(10) };
                 yield return new object[] { Add(minValue, 1), maxValue, minValue };
             }
         }

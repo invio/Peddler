@@ -20,11 +20,11 @@ namespace Peddler {
         }
 
         protected override sealed int SubtractOne(int value) {
-            return value - 1;
+            return --value;
         }
 
         protected override sealed int AddOne(int value) {
-            return value + 1;
+            return ++value;
         }
 
     }

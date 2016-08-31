@@ -4,6 +4,75 @@ namespace Peddler {
 
     public static class RandomExtensions {
 
+        public static Int16 NextInt16(this Random random) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            return random.NextInt16(0, Int16.MaxValue);
+        }
+
+        public static Int16 NextInt16(this Random random, Int16 maxValue) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            if (maxValue < 0) {
+                throw new ArgumentOutOfRangeException(
+                    nameof(maxValue),
+                    $"'{nameof(maxValue)}' must be greater than zero."
+                );
+            }
+
+            return random.NextInt16(0, maxValue);
+        }
+
+        public static Int16 NextInt16(this Random random, Int16 minValue, Int16 maxValue) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            if (minValue > maxValue) {
+                throw new ArgumentOutOfRangeException(
+                    nameof(minValue),
+                    $"'{nameof(minValue)}' cannot be greater than maxValue."
+                );
+            }
+
+            return (Int16)random.Next((Int32)minValue, (Int32)maxValue);
+        }
+
+        public static UInt16 NextUInt16(this Random random) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            return random.NextUInt16(0, UInt16.MaxValue);
+        }
+
+        public static UInt16 NextUInt16(this Random random, UInt16 maxValue) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            return random.NextUInt16(0, maxValue);
+        }
+
+        public static UInt16 NextUInt16(this Random random, UInt16 minValue, UInt16 maxValue) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            if (maxValue < 0) {
+                throw new ArgumentOutOfRangeException(
+                    nameof(maxValue),
+                    $"'{nameof(maxValue)}' must be greater than zero."
+                );
+            }
+
+            return (UInt16)random.Next((Int32)minValue, (Int32)maxValue);
+        }
+
         public static UInt32 NextUInt32(this Random random) {
             if (random == null) {
                 throw new ArgumentNullException(nameof(random));

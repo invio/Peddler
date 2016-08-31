@@ -7,6 +7,220 @@ namespace Peddler {
 
         private const int numberOfAttempts = 100;
 
+        // --- NextInt16 ---
+
+        [Fact]
+        public void NextInt16_WithDefaults() {
+            var random = new Random();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextInt16();
+
+                Assert.True(value >= 0);
+                Assert.True(value < Int16.MaxValue);
+            }
+        }
+
+        [Fact]
+        public void NextInt16_WithDefaults_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextInt16()
+            );
+        }
+
+        [Theory]
+        [InlineData((Int16)0)]
+        [InlineData((Int16)1)]
+        [InlineData((Int16)10)]
+        [InlineData(Int16.MaxValue)]
+        public void NextInt16_WithMaxValue(Int16 maxValue) {
+            var random = new Random();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextInt16(maxValue);
+
+                if (maxValue == 0) {
+                    // The only situation when 'value' can be equal to 'maxValue'
+                    // is when 'maxValue' is 0. This is identical to how
+                    // Random.Next(int maxValue) operates.
+                    Assert.Equal(maxValue, value);
+                } else {
+                    Assert.True(value >= 0);
+                    Assert.True(value < maxValue);
+                }
+            }
+        }
+
+        [Fact]
+        public void NextInt16_WithMaxValue_LessThanZero() {
+            var random = new Random();
+
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => random.NextInt16(-1)
+            );
+        }
+
+        [Fact]
+        public void NextInt16_WithMaxValue_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextInt16(1)
+            );
+        }
+
+        [Theory]
+        [InlineData((Int16)0, (Int16)0)]
+        [InlineData((Int16)1, (Int16)1)]
+        [InlineData(Int16.MaxValue, Int16.MaxValue)]
+        [InlineData(Int16.MinValue, Int16.MaxValue)]
+        [InlineData(Int16.MinValue, (Int16)(-1))]
+        [InlineData(Int16.MinValue, (Int16)0)]
+        [InlineData(Int16.MinValue, (Int16)1)]
+        [InlineData((Int16)(-1), (Int16)100)]
+        [InlineData((Int16)0, (Int16)1)]
+        [InlineData((Int16)0, (Int16)100)]
+        [InlineData((Int16)1, (Int16)100)]
+        [InlineData((Int16)0, Int16.MaxValue)]
+        [InlineData((Int16)1, Int16.MaxValue)]
+        public void NextInt16_WithRange(Int16 minValue, Int16 maxValue) {
+            var random = new Random();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextInt16(minValue, maxValue);
+
+                if (minValue == maxValue) {
+                    // The only situation when 'value' can be equal to 'maxValue'
+                    // is when 'maxValue' is equal to 'minValue'. This is identical
+                    // to how Random.Next(int minValue, maxValue) operates.
+                    Assert.Equal(minValue, value);
+                } else {
+                    Assert.True(value >= minValue);
+                    Assert.True(value < maxValue);
+                }
+            }
+        }
+
+        [Fact]
+        public void NextInt16_WithRange_MinValueLessThanMaxValue() {
+            var random = new Random();
+
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => random.NextInt16(10, 1)
+            );
+        }
+
+        [Fact]
+        public void NextInt16_WithRange_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextInt16(1, 10)
+            );
+        }
+
+        // --- NextUInt16 ---
+
+        [Fact]
+        public void NextUInt16_WithDefaults() {
+            var random = new Random();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextUInt16();
+
+                Assert.True(value >= 0);
+                Assert.True(value < UInt16.MaxValue);
+            }
+        }
+
+        [Fact]
+        public void NextUInt16_WithDefaults_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextUInt16()
+            );
+        }
+
+        [Theory]
+        [InlineData((UInt16)0)]
+        [InlineData((UInt16)1)]
+        [InlineData((UInt16)10)]
+        [InlineData(UInt16.MaxValue)]
+        public void NextUInt16_WithMaxValue(UInt16 maxValue) {
+            var random = new Random();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextUInt16(maxValue);
+
+                if (maxValue == 0) {
+                    // The only situation when 'value' can be equal to 'maxValue'
+                    // is when 'maxValue' is 0. This is identical to how
+                    // Random.Next(int maxValue) operates.
+                    Assert.Equal(maxValue, value);
+                } else {
+                    Assert.True(value >= 0);
+                    Assert.True(value < maxValue);
+                }
+            }
+        }
+
+        [Fact]
+        public void NextUInt16_WithMaxValue_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextUInt16(1)
+            );
+        }
+
+        [Theory]
+        [InlineData((UInt16)0, (UInt16)0)]
+        [InlineData((UInt16)1, (UInt16)1)]
+        [InlineData(UInt16.MaxValue, UInt16.MaxValue)]
+        [InlineData((UInt16)0, (UInt16)100)]
+        [InlineData((UInt16)1, (UInt16)100)]
+        [InlineData((UInt16)0, UInt16.MaxValue)]
+        [InlineData((UInt16)1, UInt16.MaxValue)]
+        [InlineData((UInt16)0x0000, (UInt16)0x0001)]
+        public void NextUInt16_WithRange(UInt16 minValue, UInt16 maxValue) {
+            var random = new Random();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextUInt16(minValue, maxValue);
+
+                if (minValue == maxValue) {
+                    // The only situation when 'value' can be equal to 'maxValue'
+                    // is when 'maxValue' is equal to 'minValue'. This is identical
+                    // to how Random.Next(int minValue, maxValue) operates.
+                    Assert.Equal(minValue, value);
+                } else {
+                    Assert.True(value >= minValue);
+                    Assert.True(value < maxValue);
+                }
+            }
+        }
+
+        [Fact]
+        public void NextUInt16_WithRange_MinValueLessThanMaxValue() {
+            var random = new Random();
+
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => random.NextUInt16(10, 1)
+            );
+        }
+
+        [Fact]
+        public void NextUInt16_WithRange_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextUInt16(1, 10)
+            );
+        }
+
         // --- NextUInt32 ---
 
         [Fact]

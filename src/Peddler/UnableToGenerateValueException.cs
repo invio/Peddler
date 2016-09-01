@@ -8,10 +8,12 @@ namespace Peddler {
     /// internal restaints are incompatible with the value provided.
     /// </summary>
     /// <remarks>
-    /// For example, this would be raised is if an <see cref="T:Peddler.IComparableGenerator`1" />
-    /// generated <see cref="T:System.Int32" />, but the caller asked for a value that was less than
-    /// <see cref="M:System.Int32.MinValue" />. The generate could not fulfill that request as no
-    /// <see cref="T:System.Int32" /> can be less than the minimum value, so it would throw this
+    /// For example, this would be raised is if an
+    /// <see cref="T:Peddler.IComparableGenerator`1" />
+    /// generated <see cref="T:System.Int32" />, but the caller asked for a value that
+    /// was less than <see cref="M:System.Int32.MinValue" />. The generate could not
+    /// fulfill that request as no <see cref="T:System.Int32" /> can be less than the
+    /// minimum value, so it would throw this
     /// exception.
     /// </remarks>
     public class UnableToGenerateValueException : ArgumentException {
@@ -74,8 +76,11 @@ namespace Peddler {
         /// <param name="innerException">
         ///   A lower-level exception that caused this exception to occur.
         /// </param>
-        public UnableToGenerateValueException(String message, String paramName, Exception innerException) :
-            base(message, paramName, innerException) {}
+        public UnableToGenerateValueException(
+            String message,
+            String paramName,
+            Exception innerException) :
+                base(message, paramName, innerException) {}
 
     }
 

@@ -1,7 +1,7 @@
 {
   "name": "Peddler",
   "title": "Data Generation for .NET",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "authors": [ "Brian Caruso <brian@invioinc.com>" ],
 
   "packOptions": {

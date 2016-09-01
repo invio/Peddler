@@ -19,7 +19,7 @@
 
   "buildOptions": {
     "debugType": "portable",
-    "xmlDoc": false
+    "xmlDoc": true
   },
 
   "dependencies": {

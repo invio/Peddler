@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Peddler {
 
-    public class RandomExtensionsTests {
+    public class IntegralRandomExtensionsTests {
 
         private const int numberOfAttempts = 100;
 

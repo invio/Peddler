@@ -22,8 +22,44 @@ namespace Peddler {
             this.High = high;
         }
 
+        /// <summary>
+        ///   Gets a random <typeparamref name="TIntegral" /> value that exists between
+        ///   <paramref name="low" /> (inclusively) and <paramref name="high" /> (exclusively).
+        /// </summary>
+        /// <param name="low">
+        ///   The inclusive, lower <typeparamref name="TIntegral" /> boundary for value.
+        /// </param>
+        /// <param name="high">
+        ///   The exclusive, upper <typeparamref name="TIntegral" /> boundary for value.
+        /// </param>
+        /// <returns>
+        ///   A <typeparamref name="TIntegral" /> that conforms to the boundaries defined
+        ///   via <paramref name="low" /> and <paramref name="high" />.
+        /// </returns>
         protected abstract TIntegral Next(TIntegral low, TIntegral high);
+
+        /// <summary>
+        ///   Takes the provided <typeparamref name="TIntegral" /> value
+        ///   and adds exactly one to it.
+        /// </summary>
+        /// <param name="value">
+        ///   The <typeparamref name="TIntegral" /> value which will be incremented by one.
+        /// </param>
+        /// <returns>
+        ///   The value of <paramref name="value" /> plus one.
+        /// </returns>
         protected abstract TIntegral AddOne(TIntegral value);
+
+        /// <summary>
+        ///   Takes the provided <typeparamref name="TIntegral" /> value
+        ///   and subtracts exactly one to it.
+        /// </summary>
+        /// <param name="value">
+        ///   The <typeparamref name="TIntegral" /> value which will be decremented by one.
+        /// </param>
+        /// <returns>
+        ///   The value of <paramref name="value" /> minus one.
+        /// </returns>
         protected abstract TIntegral SubtractOne(TIntegral value);
 
         public TIntegral Next() {

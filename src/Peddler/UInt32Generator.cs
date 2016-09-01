@@ -50,14 +50,17 @@ namespace Peddler {
         public UInt32Generator(UInt32 low, UInt32 high) :
             base(low, high) {}
 
+        /// <inheritdoc />
         protected override sealed UInt32 Next(UInt32 low, UInt32 high) {
             return this.random.NextUInt32(low, high);
         }
 
+        /// <inheritdoc />
         protected override sealed UInt32 SubtractOne(UInt32 value) {
             return value - 1;
         }
 
+        /// <inheritdoc />
         protected override sealed UInt32 AddOne(UInt32 value) {
             return value + 1;
         }

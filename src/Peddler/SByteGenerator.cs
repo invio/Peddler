@@ -50,14 +50,17 @@ namespace Peddler {
         public SByteGenerator(SByte low, SByte high) :
             base(low, high) {}
 
+        /// <inheritdoc />
         protected override sealed SByte Next(SByte low, SByte high) {
             return this.random.NextSByte(low, high);
         }
 
+        /// <inheritdoc />
         protected override sealed SByte SubtractOne(SByte value) {
             return (SByte)(value - 1);
         }
 
+        /// <inheritdoc />
         protected override sealed SByte AddOne(SByte value) {
             return (SByte)(value + 1);
         }

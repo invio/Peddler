@@ -50,14 +50,17 @@ namespace Peddler {
         public Int64Generator(Int64 low, Int64 high) :
             base(low, high) {}
 
+        /// <inheritdoc />
         protected override sealed Int64 Next(Int64 low, Int64 high) {
             return this.random.NextInt64(low, high);
         }
 
+        /// <inheritdoc />
         protected override sealed Int64 SubtractOne(Int64 value) {
             return value - 1;
         }
 
+        /// <inheritdoc />
         protected override sealed Int64 AddOne(Int64 value) {
             return value + 1;
         }

@@ -50,14 +50,17 @@ namespace Peddler {
         public Int32Generator(Int32 low, Int32 high) :
             base(low, high) {}
 
+        /// <inheritdoc />
         protected override sealed Int32 Next(Int32 low, Int32 high) {
             return this.random.Next(low, high);
         }
 
+        /// <inheritdoc />
         protected override sealed Int32 SubtractOne(Int32 value) {
             return value - 1;
         }
 
+        /// <inheritdoc />
         protected override sealed Int32 AddOne(Int32 value) {
             return value + 1;
         }

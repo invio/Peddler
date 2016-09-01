@@ -34,7 +34,7 @@ namespace Peddler {
             this(low, Int16.MaxValue) {}
 
         /// <summary>
-        ///   Instantiates an <see cref="T:Int16Generator" /> that can create
+        ///   Instantiates an <see cref="T:Peddler.Int16Generator" /> that can create
         ///   <see cref="T:System.Int16" /> values that range from <paramref name="low" />
         ///   (inclusively) to <paramref name="high" /> (exclusively).
         /// </summary>
@@ -50,14 +50,17 @@ namespace Peddler {
         public Int16Generator(Int16 low, Int16 high) :
             base(low, high) {}
 
+        /// <inheritdoc />
         protected override sealed Int16 Next(Int16 low, Int16 high) {
             return this.random.NextInt16(low, high);
         }
 
+        /// <inheritdoc />
         protected override sealed Int16 SubtractOne(Int16 value) {
             return (Int16)(value - 1);
         }
 
+        /// <inheritdoc />
         protected override sealed Int16 AddOne(Int16 value) {
             return (Int16)(value + 1);
         }

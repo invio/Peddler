@@ -50,14 +50,17 @@ namespace Peddler {
         public UInt16Generator(UInt16 low, UInt16 high) :
             base(low, high) {}
 
+        /// <inheritdoc />
         protected override sealed UInt16 Next(UInt16 low, UInt16 high) {
             return this.random.NextUInt16(low, high);
         }
 
+        /// <inheritdoc />
         protected override sealed UInt16 SubtractOne(UInt16 value) {
             return (UInt16)(value - 1);
         }
 
+        /// <inheritdoc />
         protected override sealed UInt16 AddOne(UInt16 value) {
             return (UInt16)(value + 1);
         }

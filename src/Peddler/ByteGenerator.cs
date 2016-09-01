@@ -50,14 +50,17 @@ namespace Peddler {
         public ByteGenerator(Byte low, Byte high) :
             base(low, high) {}
 
+        /// <inheritdoc />
         protected override sealed Byte Next(Byte low, Byte high) {
             return this.random.NextByte(low, high);
         }
 
+        /// <inheritdoc />
         protected override sealed Byte SubtractOne(Byte value) {
             return (Byte)(value - 1);
         }
 
+        /// <inheritdoc />
         protected override sealed Byte AddOne(Byte value) {
             return (Byte)(value + 1);
         }

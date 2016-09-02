@@ -3,23 +3,17 @@ using System;
 namespace Peddler {
 
     /// <summary>
-    ///   A base implementation of <see cref="IGenerator{T}" />,
-    ///   <see cref="IDistinctGenerator{T}" /> and <see cref="IComparableGenerator{T}" />
-    ///   for an integral types, such as <see cref="System.Int32" />,
-    ///   <see cref="System.Byte" />, and <see cref="System.UInt64" />.
+    ///   A base implementation of <see cref="IIntegralGenerator{T}" />
+    ///   for an core integral types, such as <see cref="Int32" />,
+    ///   <see cref="Byte" />, and <see cref="UInt64" />.
     /// </summary>
-    public abstract class IntegralGenerator<TIntegral> :
-        IGenerator<TIntegral>, IDistinctGenerator<TIntegral>, IComparableGenerator<TIntegral>
+    public abstract class IntegralGenerator<TIntegral> : IIntegralGenerator<TIntegral>
         where TIntegral : struct, IEquatable<TIntegral>, IComparable<TIntegral> {
 
-        /// <summary>
-        ///   The inclusive, lower <typeparamref name="TIntegral" /> boundary for this generator.
-        /// </summary>
+        /// <inheritdoc />
         public TIntegral Low { get; }
 
-        /// <summary>
-        ///   The exclusive, upper <typeparamref name="TIntegral" /> boundary for this generator.
-        /// </summary>
+        /// <inheritdoc />
         public TIntegral High { get; }
 
         /// <summary>
@@ -33,7 +27,7 @@ namespace Peddler {
         /// <param name="high">
         ///   The exclusive, upper <typeparamref name="TIntegral" /> boundary for this generator.
         /// </param>
-        /// <exception cref="System.ArgumentException">
+        /// <exception cref="ArgumentException">
         ///   Thrown when <paramref name="low" /> is greater than or equal to
         ///   <paramref name="high" />.
         /// </exception>
@@ -121,7 +115,7 @@ namespace Peddler {
         ///   An instance of type <typeparamref name="TIntegral"/> that falls between
         ///   <see cref="Low" /> (inclusively) and <see cref="High" /> (exclusively).
         /// </returns>
-        /// <exception cref="Peddler.UnableToGenerateValueException">
+        /// <exception cref="UnableToGenerateValueException">
         ///   Thrown when this generator is unable to provide a value between
         ///   <see cref="Low" /> (inclusively) and <see cref="High" /> (exclusively).
         ///   This can happen if <see cref="Low" /> and <see cref="High" /> have an
@@ -189,7 +183,7 @@ namespace Peddler {
         ///   <see cref="Low" /> (inclusively) and <see cref="High" /> (exclusively),
         ///   but is also greater than <paramref name="other" />.
         /// </returns>
-        /// <exception cref="Peddler.UnableToGenerateValueException">
+        /// <exception cref="UnableToGenerateValueException">
         ///   Thrown when this generator is unable to provide a value between
         ///   <see cref="Low" /> (inclusively) and <see cref="High" /> (exclusively).
         ///   This can happen if <see cref="High" /> is less than or equal to the
@@ -232,7 +226,7 @@ namespace Peddler {
         ///   <see cref="Low" /> (inclusively) and <see cref="High" /> (exclusively),
         ///   but is also greater than or equal to <paramref name="other" />.
         /// </returns>
-        /// <exception cref="Peddler.UnableToGenerateValueException">
+        /// <exception cref="UnableToGenerateValueException">
         ///   Thrown when this generator is unable to provide a value between
         ///   <see cref="Low" /> (inclusively) and <see cref="High" /> (exclusively).
         ///   This can happen if <see cref="High" /> is less than or equal to the
@@ -275,7 +269,7 @@ namespace Peddler {
         ///   <see cref="Low" /> (inclusively) and <see cref="High" /> (exclusively),
         ///   but is also less than <paramref name="other" />.
         /// </returns>
-        /// <exception cref="Peddler.UnableToGenerateValueException">
+        /// <exception cref="UnableToGenerateValueException">
         ///   Thrown when this generator is unable to provide a value between
         ///   <see cref="Low" /> (inclusively) and <see cref="High" /> (exclusively).
         ///   This can happen if <see cref="Low" /> is greater than or equal to the
@@ -318,7 +312,7 @@ namespace Peddler {
         ///   <see cref="Low" /> (inclusively) and <see cref="High" /> (exclusively),
         ///   but is also less than or equal to <paramref name="other" />.
         /// </returns>
-        /// <exception cref="Peddler.UnableToGenerateValueException">
+        /// <exception cref="UnableToGenerateValueException">
         ///   Thrown when this generator is unable to provide a value between
         ///   <see cref="Low" /> (inclusively) and <see cref="High" /> (exclusively).
         ///   This can happen if <see cref="Low" /> is greater than the

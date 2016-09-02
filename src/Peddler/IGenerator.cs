@@ -10,7 +10,7 @@ namespace Peddler {
         /// <summary>
         ///   Creates a new instance of <typeparamref name="T"/> based
         ///   upon the constraints injected into this implementation of
-        ///   <see cref="Peddler.IGenerator{T}"/>.
+        ///   <see cref="IGenerator{T}"/>.
         /// </summary>
         /// <returns>
         ///   An instance of <typeparamref name="T"/>.

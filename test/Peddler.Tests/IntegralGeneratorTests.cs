@@ -44,9 +44,12 @@ namespace Peddler {
             }
         }
 
-        protected abstract IntegralGenerator<TIntegral> CreateGenerator();
-        protected abstract IntegralGenerator<TIntegral> CreateGenerator(TIntegral low);
-        protected abstract IntegralGenerator<TIntegral> CreateGenerator(TIntegral low, TIntegral high);
+        protected abstract IIntegralGenerator<TIntegral> CreateGenerator();
+        protected abstract IIntegralGenerator<TIntegral> CreateGenerator(TIntegral low);
+        protected abstract IIntegralGenerator<TIntegral> CreateGenerator(
+            TIntegral low,
+            TIntegral high
+        );
 
         [Fact]
         public virtual void Constructor_WithLow_CannotBeMaxIntegralValue() {

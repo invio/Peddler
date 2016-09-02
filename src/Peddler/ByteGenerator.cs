@@ -3,12 +3,12 @@ using System;
 namespace Peddler {
 
     /// <summary>
-    ///   A generator for numbers of type <see cref="System.Byte" />. Depending on the
+    ///   A generator for numbers of type <see cref="Byte" />. Depending on the
     ///   constructor used, the generator can either utilize a range of all possible
-    ///   <see cref="System.Byte" /> values or a constrained, smaller range.
+    ///   <see cref="Byte" /> values or a constrained, smaller range.
     /// </summary>
     /// <remarks>
-    ///   The range of possible <see cref="System.Byte" /> values will always be contiguous.
+    ///   The range of possible <see cref="Byte" /> values will always be contiguous.
     /// </remarks>
     public class ByteGenerator : IntegralGenerator<Byte> {
 
@@ -16,35 +16,35 @@ namespace Peddler {
 
         /// <summary>
         ///   Instantiates an <see cref="ByteGenerator" /> that can create
-        ///   <see cref="System.Byte" /> values that range from 0 (inclusively) to
-        ///   <see cref="System.Byte.MaxValue" /> (exclusively).
+        ///   <see cref="Byte" /> values that range from 0 (inclusively) to
+        ///   <see cref="Byte.MaxValue" /> (exclusively).
         /// </summary>
         public ByteGenerator() :
             this(0, Byte.MaxValue) {}
 
         /// <summary>
         ///   Instantiates an <see cref="ByteGenerator" /> that can create
-        ///   <see cref="System.Byte" /> values that range from <paramref name="low" />
-        ///   (inclusively) to <see cref="System.Byte.MaxValue" /> (exclusively).
+        ///   <see cref="Byte" /> values that range from <paramref name="low" />
+        ///   (inclusively) to <see cref="Byte.MaxValue" /> (exclusively).
         /// </summary>
         /// <param name="low">
-        ///   The inclusive, lower <see cref="System.Byte" /> boundary for this generator.
+        ///   The inclusive, lower <see cref="Byte" /> boundary for this generator.
         /// </param>
         public ByteGenerator(Byte low) :
             this(low, Byte.MaxValue) {}
 
         /// <summary>
         ///   Instantiates an <see cref="ByteGenerator" /> that can create
-        ///   <see cref="System.Byte" /> values that range from <paramref name="low" />
+        ///   <see cref="Byte" /> values that range from <paramref name="low" />
         ///   (inclusively) to <paramref name="high" /> (exclusively).
         /// </summary>
         /// <param name="low">
-        ///   The inclusive, lower <see cref="System.Byte" /> boundary for this generator.
+        ///   The inclusive, lower <see cref="Byte" /> boundary for this generator.
         /// </param>
         /// <param name="high">
-        ///   The exclusive, upper <see cref="System.Byte" /> boundary for this generator.
+        ///   The exclusive, upper <see cref="Byte" /> boundary for this generator.
         /// </param>
-        /// <exception cref="System.ArgumentException">
+        /// <exception cref="ArgumentException">
         ///   Thrown when <paramref name="low" /> is greater than or equal to
         ///   <paramref name="high" />.
         /// </exception>

@@ -645,13 +645,13 @@ namespace Peddler {
             // For example, a range of 2 to 10 is now 0 to 8.
             var range = maxValue - minValue;
 
-            var isPreviousQuadrantBelowMaximum = false;
+            var isPreviousQuadrantBelowItsMaximum = false;
             var fullValue = 0ul;
 
             for (var quadrant = 1; quadrant <= 4; quadrant++) {
                 UInt16 quadrantValue = 0;
 
-                if (isPreviousQuadrantBelowMaximum) {
+                if (isPreviousQuadrantBelowItsMaximum) {
                     quadrantValue = (UInt16)random.Next(((int)UInt16.MaxValue) + 1);
                 } else {
                     var maximum = (UInt16)(range >> (64 - (quadrant * 16)));
@@ -672,14 +672,14 @@ namespace Peddler {
                         }
 
                         if ((range & mask) > 0) {
-                            maximum++;
+                            quadrantValue = (UInt16)random.Next(((int)maximum) + 1);
+                        } else {
+                            quadrantValue = random.NextUInt16(maximum);
                         }
-
-                        quadrantValue = (UInt16)random.Next((int)maximum);
                     }
 
                     if (quadrantValue < maximum) {
-                        isPreviousQuadrantBelowMaximum = true;
+                        isPreviousQuadrantBelowItsMaximum = true;
                     }
                 }
 

@@ -3,7 +3,8 @@ using System;
 namespace Peddler {
 
     /// <summary>
-    ///   A common interface for generate values of type <typeparamref name="T"/>.
+    ///   A common interface for implementations that generate values of type
+    ///   <typeparamref name="T"/>.
     /// </summary>
     public interface IGenerator<out T> {
 

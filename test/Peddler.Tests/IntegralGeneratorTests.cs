@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Xunit;
+using Xunit.Sdk;
 
 namespace Peddler {
 
@@ -26,6 +28,15 @@ namespace Peddler {
         }
 
         private static TIntegral ToIntegral(Object value) {
+            if (typeof(TIntegral) == typeof(DateTime)) {
+                // DateTime integral value is ticks', which isn't supported
+                // Convert.ChangeType.
+                value = new DateTime(
+                    (Int64)Convert.ChangeType(value, typeof(Int64)),
+                    DateTimeKind.Unspecified
+                );
+            }
+
             return (TIntegral)Convert.ChangeType(value, typeof(TIntegral));
         }
 
@@ -40,19 +51,21 @@ namespace Peddler {
                     }
                 }
 
+                if (typeof(TIntegral) == typeof(DateTime)) {
+
+                    return ToIntegral(((DateTime)(object)value).Ticks + amount);
+                }
+
                 return ToIntegral(Convert.ToInt64(value) + amount);
             }
         }
 
         protected abstract IIntegralGenerator<TIntegral> CreateGenerator();
         protected abstract IIntegralGenerator<TIntegral> CreateGenerator(TIntegral low);
-        protected abstract IIntegralGenerator<TIntegral> CreateGenerator(
-            TIntegral low,
-            TIntegral high
-        );
+        protected abstract IIntegralGenerator<TIntegral> CreateGenerator(TIntegral low, TIntegral high);
 
         [Fact]
-        public virtual void Constructor_WithLow_CannotBeMaxIntegralValue() {
+        public void Constructor_WithLow_CannotBeMaxIntegralValue() {
             Assert.Throws<ArgumentException>(
                 () => this.CreateGenerator(maxValue)
             );
@@ -70,7 +83,7 @@ namespace Peddler {
 
         [Theory]
         [MemberData(nameof(Constructor_WithLowAndHigh_LowMustBeLessThanHigh_Data))]
-        public virtual void Constructor_WithLowAndHigh_LowMustBeLessThanHigh(
+        public void Constructor_WithLowAndHigh_LowMustBeLessThanHigh(
             TIntegral low,
             TIntegral high) {
 
@@ -80,7 +93,7 @@ namespace Peddler {
         }
 
         [Fact]
-        public virtual void Next_WithDefaults_RangeIsZeroToMaxIntegralValue() {
+        public void Next_WithDefaults_RangeIsZeroToMaxIntegralValue() {
             var generator = this.CreateGenerator();
 
             Assert.Equal(generator.Low, ToIntegral(0));
@@ -89,7 +102,7 @@ namespace Peddler {
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
                 var value = generator.Next();
 
-                Assert.True(value.CompareTo(ToIntegral(0)) >= 0);
+                Assert.True(value.CompareTo(generator.Low) >= 0);
                 Assert.True(value.CompareTo(generator.High) < 0);
             }
         }
@@ -104,7 +117,7 @@ namespace Peddler {
 
         [Theory]
         [MemberData(nameof(Next_WithLowDefined_RangeIsLowToMaxIntegralValue_Data))]
-        public virtual void Next_WithLowDefined_RangeIsLowToMaxIntegralValue(TIntegral low) {
+        public void Next_WithLowDefined_RangeIsLowToMaxIntegralValue(TIntegral low) {
             var generator = this.CreateGenerator(low);
 
             Assert.Equal(generator.Low, low);
@@ -122,13 +135,13 @@ namespace Peddler {
             get {
                 yield return new object[] { minValue, maxValue };
                 yield return new object[] { minValue, ToIntegral(1) };
-                yield return new object[] { 0, maxValue };
+                yield return new object[] { ToIntegral(0), maxValue };
             }
         }
 
         [Theory]
         [MemberData(nameof(Next_WithLowAndHighDefined_RangeIsBetweenLowAndHigh_Data))]
-        public virtual void Next_WithLowAndHighDefined_RangeIsBetweenLowAndHigh(
+        public void Next_WithLowAndHighDefined_RangeIsBetweenLowAndHigh(
             TIntegral low,
             TIntegral high) {
 
@@ -154,7 +167,7 @@ namespace Peddler {
 
         [Theory]
         [MemberData(nameof(NextDistinct_NeverGetSameValue_Data))]
-        public virtual void NextDistinct_NeverGetSameValue(TIntegral low, TIntegral high) {
+        public void NextDistinct_NeverGetSameValue(TIntegral low, TIntegral high) {
             var generator = this.CreateGenerator(low, high);
             var previousValue = generator.Next();
 
@@ -166,7 +179,7 @@ namespace Peddler {
         }
 
         [Fact]
-        public virtual void NextDistinct_ThrowOnConstantGenerator() {
+        public void NextDistinct_ThrowOnConstantGenerator() {
             // With these arguments, IntegralGenerator<TIntegral> can only generate '0'
             var generator = this.CreateGenerator(ToIntegral(0), ToIntegral(1));
             var value = generator.Next();

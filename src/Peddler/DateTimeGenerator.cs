@@ -12,7 +12,7 @@ namespace Peddler {
     ///   Each <see cref="DateTime" /> is considered distinct from another by
     ///   the number of ticks used to represent its value.
     /// </remarks>
-    public class DateTimeGenerator : IGenerator<DateTime>, IDistinctGenerator<DateTime> {
+    public class DateTimeGenerator : IIntegralGenerator<DateTime> {
 
         private Int64Generator tickGenerator { get; }
 
@@ -114,6 +114,23 @@ namespace Peddler {
             this.High = new DateTime(this.tickGenerator.High, this.Kind);
         }
 
+        private DateTime NextImpl(Func<Int64> getNextTicks) {
+            return new DateTime(getNextTicks(), this.Kind);
+        }
+
+        private DateTime NextImpl(DateTime other, Func<Int64, Int64> getNextTicks) {
+            if (other.Kind != this.Kind) {
+                throw new ArgumentException(
+                    $"The {typeof(DateTimeKind).Name} of '{nameof(other)}' ({other.Kind:G}) " +
+                    $"did not match the '{typeof(DateTimeKind).Name}' of this " +
+                    $"typeof(typeof(DateTimeGenerator).Name) ({this.Kind:G}).",
+                    nameof(other)
+                );
+            }
+
+            return this.NextImpl(() => getNextTicks(other.Ticks));
+        }
+
         /// <summary>
         ///   Creates a new <see cref="DateTime" /> value that is later than or
         ///   equal to <see cref="Low" /> and earlier than <see cref="High" />.
@@ -127,13 +144,13 @@ namespace Peddler {
         ///   returned will be equal to the <see cref="Kind" /> property.
         /// </returns>
         public DateTime Next() {
-            return new DateTime(this.tickGenerator.Next(), this.Kind);
+            return this.NextImpl(this.tickGenerator.Next);
         }
 
         /// <summary>
         ///   Creates a new <see cref="DateTime" /> value that is later than or
         ///   equal to <see cref="Low" /> and earlier than <see cref="High" />,
-        ///   but will not be equal to <paramref name="other" />.
+        ///   but will not be equal to <paramref name="other" /> (in terms of ticks).
         ///   The <see cref="DateTimeKind" /> on the <see cref="DateTime" />
         ///   returned will be equal to the <see cref="Kind" /> property
         ///   on this <see cref="DateTimeGenerator" />.
@@ -142,7 +159,7 @@ namespace Peddler {
         ///   The value provided for <paramref name="other" /> does not, itself,
         ///   need to be between <see cref="Low" /> and <see cref="High" />.
         ///   It does, however, need to have a <see cref="DateTimeKind" /> that
-        ///   is consistent with the <see cref="Kind" /> property in this
+        ///   is consistent with the <see cref="Kind" /> property on this
         ///   <see cref="DateTimeGenerator" />.
         /// </remarks>
         /// <param name="other">
@@ -170,16 +187,163 @@ namespace Peddler {
         ///   provided via the <paramref name="other" /> parameter has that many ticks.
         /// </exception>
         public DateTime NextDistinct(DateTime other) {
-            if (other.Kind != this.Kind) {
-                throw new ArgumentException(
-                    $"The {typeof(DateTimeKind).Name} of '{nameof(other)}' ({other.Kind:G}) " +
-                    $"did not match the '{typeof(DateTimeKind).Name}' of this " +
-                    $"typeof(typeof(DateTimeGenerator).Name) ({this.Kind:G}).",
-                    nameof(other)
-                );
-            }
+            return this.NextImpl(other, this.tickGenerator.NextDistinct);
+        }
 
-            return new DateTime(this.tickGenerator.NextDistinct(other.Ticks), this.Kind);
+        /// <summary>
+        ///   Creates a new <see cref="DateTime" /> value that is later than
+        ///   <paramref name="other" /> (in terms of ticks).
+        ///   The <see cref="DateTimeKind" /> on the <see cref="DateTime" />
+        ///   returned will be equal to the <see cref="Kind" /> property
+        ///   on this <see cref="DateTimeGenerator" />.
+        /// </summary>
+        /// <remarks>
+        ///   The value provided for <paramref name="other" /> does not, itself,
+        ///   need to be between <see cref="Low" /> and <see cref="High" />.
+        ///   It does, however, need to have a <see cref="DateTimeKind" /> that
+        ///   is consistent with the <see cref="Kind" /> property on this
+        ///   <see cref="DateTimeGenerator" />.
+        /// </remarks>
+        /// <param name="other">
+        ///   A <see cref="DateTime" /> that is earlier than the
+        ///   <see cref="DateTime" /> that is to be returned (in terms of ticks).
+        /// </param>
+        /// <returns>
+        ///   A <see cref="DateTime" /> that is later than
+        ///   <paramref name="other" /> (in terms of ticks).
+        ///   The <see cref="DateTimeKind" /> on the <see cref="DateTime" />
+        ///   returned will be equal to the <see cref="Kind" /> property.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        ///   Thrown when the <see cref="Kind" /> defined on this
+        ///   <see cref="DateTimeGenerator" /> is different than the
+        ///   <see cref="DateTimeKind" /> specified on the <paramref name="other" />
+        ///   parameter.
+        /// </exception>
+        /// <exception cref="UnableToGenerateValueException">
+        ///   Thrown when this generator is unable to provide a value later than
+        ///   <paramref name="other" />. This can happen if <see cref="High" />
+        ///   is earlier than or equal to <paramref name="other" /> (in terms of ticks).
+        /// </exception>
+        public DateTime NextGreaterThan(DateTime other) {
+            return this.NextImpl(other, this.tickGenerator.NextGreaterThan);
+        }
+
+        /// <summary>
+        ///   Creates a new <see cref="DateTime" /> value that is later than
+        ///   or equal to <paramref name="other" /> (in terms of ticks).
+        ///   The <see cref="DateTimeKind" /> on the <see cref="DateTime" />
+        ///   returned will be equal to the <see cref="Kind" /> property
+        ///   on this <see cref="DateTimeGenerator" />.
+        /// </summary>
+        /// <remarks>
+        ///   The value provided for <paramref name="other" /> does not, itself,
+        ///   need to be between <see cref="Low" /> and <see cref="High" />.
+        ///   It does, however, need to have a <see cref="DateTimeKind" /> that
+        ///   is consistent with the <see cref="Kind" /> property on this
+        ///   <see cref="DateTimeGenerator" />.
+        /// </remarks>
+        /// <param name="other">
+        ///   A <see cref="DateTime" /> that is earlier than or equal to the
+        ///   <see cref="DateTime" /> that is to be returned (in terms of ticks).
+        /// </param>
+        /// <returns>
+        ///   A <see cref="DateTime" /> that is later than or equal to
+        ///   <paramref name="other" /> (in terms of ticks).
+        ///   The <see cref="DateTimeKind" /> on the <see cref="DateTime" />
+        ///   returned will be equal to the <see cref="Kind" /> property.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        ///   Thrown when the <see cref="Kind" /> defined on this
+        ///   <see cref="DateTimeGenerator" /> is different than the
+        ///   <see cref="DateTimeKind" /> specified on the <paramref name="other" />
+        ///   parameter.
+        /// </exception>
+        /// <exception cref="UnableToGenerateValueException">
+        ///   Thrown when this generator is unable to provide a value later than or
+        ///   equal to <paramref name="other" />. This can happen if <see cref="High" />
+        ///   is earlier than or equal to <paramref name="other" /> (in terms of ticks).
+        /// </exception>
+        public DateTime NextGreaterThanOrEqualTo(DateTime other) {
+            return this.NextImpl(other, this.tickGenerator.NextGreaterThanOrEqualTo);
+        }
+
+        /// <summary>
+        ///   Creates a new <see cref="DateTime" /> value that is earlier than
+        ///   <paramref name="other" /> (in terms of ticks).
+        ///   The <see cref="DateTimeKind" /> on the <see cref="DateTime" />
+        ///   returned will be equal to the <see cref="Kind" /> property
+        ///   on this <see cref="DateTimeGenerator" />.
+        /// </summary>
+        /// <remarks>
+        ///   The value provided for <paramref name="other" /> does not, itself,
+        ///   need to be between <see cref="Low" /> and <see cref="High" />.
+        ///   It does, however, need to have a <see cref="DateTimeKind" /> that
+        ///   is consistent with the <see cref="Kind" /> property on this
+        ///   <see cref="DateTimeGenerator" />.
+        /// </remarks>
+        /// <param name="other">
+        ///   A <see cref="DateTime" /> that is later than the
+        ///   <see cref="DateTime" /> that is to be returned (in terms of ticks).
+        /// </param>
+        /// <returns>
+        ///   A <see cref="DateTime" /> that is earlier than
+        ///   <paramref name="other" /> (in terms of ticks).
+        ///   The <see cref="DateTimeKind" /> on the <see cref="DateTime" />
+        ///   returned will be equal to the <see cref="Kind" /> property.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        ///   Thrown when the <see cref="Kind" /> defined on this
+        ///   <see cref="DateTimeGenerator" /> is different than the
+        ///   <see cref="DateTimeKind" /> specified on the <paramref name="other" />
+        ///   parameter.
+        /// </exception>
+        /// <exception cref="UnableToGenerateValueException">
+        ///   Thrown when this generator is unable to provide a value earlier than
+        ///   <paramref name="other" />. This can happen if <see cref="Low" />
+        ///   is later than or equal to <paramref name="other" /> (in terms of ticks).
+        /// </exception>
+        public DateTime NextLessThan(DateTime other) {
+            return this.NextImpl(other, this.tickGenerator.NextLessThan);
+        }
+
+        /// <summary>
+        ///   Creates a new <see cref="DateTime" /> value that is earlier than or
+        ///   equal to <paramref name="other" /> (in terms of ticks).
+        ///   The <see cref="DateTimeKind" /> on the <see cref="DateTime" />
+        ///   returned will be equal to the <see cref="Kind" /> property
+        ///   on this <see cref="DateTimeGenerator" />.
+        /// </summary>
+        /// <remarks>
+        ///   The value provided for <paramref name="other" /> does not, itself,
+        ///   need to be between <see cref="Low" /> and <see cref="High" />.
+        ///   It does, however, need to have a <see cref="DateTimeKind" /> that
+        ///   is consistent with the <see cref="Kind" /> property on this
+        ///   <see cref="DateTimeGenerator" />.
+        /// </remarks>
+        /// <param name="other">
+        ///   A <see cref="DateTime" /> that is later than or equal to
+        ///   the <see cref="DateTime" /> that is to be returned (in terms of ticks).
+        /// </param>
+        /// <returns>
+        ///   A <see cref="DateTime" /> that is earlier than or equal to both
+        ///   <paramref name="other" /> (in terms of ticks).
+        ///   The <see cref="DateTimeKind" /> on the <see cref="DateTime" />
+        ///   returned will be equal to the <see cref="Kind" /> property.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        ///   Thrown when the <see cref="Kind" /> defined on this
+        ///   <see cref="DateTimeGenerator" /> is different than the
+        ///   <see cref="DateTimeKind" /> specified on the <paramref name="other" />
+        ///   parameter.
+        /// </exception>
+        /// <exception cref="UnableToGenerateValueException">
+        ///   Thrown when this generator is unable to provide a value earlier than
+        ///   or equal to <paramref name="other" />. This can happen if <see cref="Low" />
+        ///   is later than <paramref name="other" /> (in terms of ticks).
+        /// </exception>
+        public DateTime NextLessThanOrEqualTo(DateTime other) {
+            return this.NextImpl(other, this.tickGenerator.NextLessThanOrEqualTo);
         }
 
     }

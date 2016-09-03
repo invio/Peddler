@@ -20,8 +20,8 @@ namespace Peddler {
         ///   An instance of <typeparamref name="T"/> that is distinct (i.e. "not equal to")
         ///   <paramref name="other" />.
         /// </returns>
-        /// <exception cref="Peddler.UnableToGenerateValueException">
-        ///   Thrown when this <see cref="Peddler.IComparableGenerator{T}"/> is unable to
+        /// <exception cref="UnableToGenerateValueException">
+        ///   Thrown when this <see cref="IDistinctGenerator{T}"/> is unable to
         ///   generate a value that is distinct from <paramref name="other" />.
         /// </exception>
         T NextDistinct(T other);

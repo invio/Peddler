@@ -5,7 +5,7 @@ namespace Peddler {
 
     public class IntegralRandomExtensionsTests {
 
-        private const int numberOfAttempts = 100;
+        private const int numberOfAttempts = 1000;
 
         // --- NextSByte ---
 
@@ -617,6 +617,7 @@ namespace Peddler {
         [InlineData((Int64)0x0000000000000000, (Int64)0x0000000100000000)]
         [InlineData((Int64)0x0000000000000000, (Int64)0x0000000000010000)]
         [InlineData((Int64)0x0000000000000000, (Int64)0x0000000000000001)]
+        [InlineData((Int64)0x0000000000000001, (Int64)0x2BCA2875F4373FFF)]
         public void NextInt64_WithRange(Int64 minValue, Int64 maxValue) {
             var random = new Random();
 

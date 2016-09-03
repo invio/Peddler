@@ -73,7 +73,20 @@ public static void Main(string[] args) {
 ```
 
 ## Implementations
-TODO
+Peddler also includes implementations for many of the basic data types of the .NET Framework. While you can always create (or submit a pull request with) your own variant of any of these data types, the flexibility provided by the various constructors on each of these implementations will fill most use cases for raw, randomized data generation.
+
+| Type | `IGenerator<T>` | `IDistinctGenerator<T>` | `IComparableGenerator<T>` | Notes |
+| ---- |:---------------:|:-----------------------:|:-------------------------:| ----- |
+| [SByte](src/Peddler/SByteGenerator.cs) | X | X | X |   |
+| [Byte](src/Peddler/ByteGenerator.cs) | X | X | X |   |
+| [Int16](src/Peddler/Int16enerator.cs) | X | X | X |   |
+| [UInt16](src/Peddler/UInt16Generator.cs) | X | X | X |   |
+| [Int32](src/Peddler/Int32Generator.cs) | X | X | X |   |
+| [UInt32](src/Peddler/UInt32Generator.cs) | X | X | X |   |
+| [Int64](src/Peddler/Int64Generator.cs) | X | X | X |   |
+| [UInt64](src/Peddler/UInt64Generator.cs) | X | X | X |   |
+| [Guid](src/Peddler/GuidGenerator.cs) | X |   |   |   |
+| [DateTime](src/Peddler/DateTimeGenerator.cs) | X | X | X | Enforces consistent use of 'Kind' |
 
 ## Constraints
 
@@ -95,5 +108,4 @@ public static void Main(string[] args) {
 }
 ```
 
-
-That's all <3
+That's it. <3

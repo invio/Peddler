@@ -9,11 +9,12 @@ namespace Peddler {
     /// <summary>
     ///   A generator for non-nullable strings of various lengths and characters.
     /// </summary>
-    public class StringGenerator : IGenerator<String> {
+    public class StringGenerator : IGenerator<String>, IDistinctGenerator<String> {
 
         private static ISet<Char> defaultCharacters { get; } = CharacterSets.AsciiPrintable;
+
         private Random random { get; } = new Random();
-        private char[] characters { get; }
+        private char[] charactersLookup { get; }
 
         /// <summary>
         ///   The inclusive, lower boundary for the length of <see cref="String" />
@@ -108,8 +109,7 @@ namespace Peddler {
             this.Minimum = length;
             this.Maximum = length;
             this.Characters = characters.ToImmutableHashSet();
-
-            this.characters = characters.ToArray();
+            this.charactersLookup = characters.ToArray();
         }
 
         /// <summary>
@@ -202,15 +202,28 @@ namespace Peddler {
 
             this.Minimum = minimum;
             this.Maximum = maximum;
-            this.characters = characters.ToArray();
+            this.Characters = characters.ToImmutableHashSet();
+            this.charactersLookup = characters.ToArray();
         }
 
-        private int NextInclusive(int low, int high) {
+        private int NextInt32Inclusive(int low, int high) {
             if (high == Int32.MaxValue) {
                 return (Int32)this.random.NextInt64(low, (Int64)(high + 1));
             } else {
                 return this.random.Next(low, high);
             }
+        }
+
+        private String NextOfLength(int length) {
+            var buffer = new StringBuilder(length);
+
+            for (var character = 0; character < length; character++) {
+                var index = this.random.Next(this.charactersLookup.Length);
+
+                buffer.Append(this.charactersLookup[index]);
+            }
+
+            return buffer.ToString();
         }
 
         /// <summary>
@@ -224,16 +237,139 @@ namespace Peddler {
         ///   the characters defined in the <see cref="Characters" /> set.
         /// </returns>
         public String Next() {
-            var length = this.NextInclusive(this.Minimum, this.Maximum);
+            var length = this.NextInt32Inclusive(this.Minimum, this.Maximum);
+
+            return this.NextOfLength(length);
+        }
+
+        /// <summary>
+        ///   Creates a new <see cref="String" /> instance that is distinct from
+        ///   the <paramref name="other" />, but will still have a length that is between
+        ///   <see cref="Minimum" /> and <see cref="Maximum" /> (inclusively), and only
+        ///   contain characters defined in the <see cref="Characters" /> property.
+        /// </summary>
+        /// <remarks>
+        ///   The <see cref="String" /> provided for <paramref name="other" /> does not,
+        ///   itself need to have a length between defined <see cref="Minimum" /> and
+        ///   <see cref="Maximum" />, nor only contain characters defined in the
+        ///   <see cref="Characters" /> property.
+        /// </remarks>
+        /// <param name="other">
+        ///   A <see cref="String" /> that is distinct (in terms of characters or length)
+        ///   from the <see cref="String" /> that is returned.
+        /// </param>
+        /// <returns>
+        ///   A <see cref="String" /> that is distinct (in terms of characters or length)
+        ///   from <paramref name="other" />, has a length that is between
+        ///   <see cref="Minimum" /> and <see cref="Maximum" /> (inclusively), and contains
+        ///   characters defined in the <see cref="Characters" /> property.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   Thrown when <paramref name="other" /> is null.
+        /// </exception>
+        /// <exception cref="UnableToGenerateValueException">
+        ///   Thrown when this generator is unable to provide a <see cref="String" /> that
+        ///   is distinct from the value provided via the <paramref name="other" /> argument.
+        ///   This can happen if <see cref="Minimum" /> and <see cref="Maximum" /> are
+        ///   equal to the length of <paramref name="other" /> and the characters that
+        ///   <paramref name="other" /> are each considered equal to all of the characters
+        ///   defined in this <see cref="StringGenerator" /> instances' the
+        ///   <see cref="Characters" /> property.
+        /// </exception>
+        public String NextDistinct(String other) {
+            if (other == null) {
+                throw new ArgumentNullException(nameof(other));
+            }
+
+            if (other.Length < this.Minimum || other.Length > this.Maximum) {
+
+                // In this context, we couldn't generate a matching string if we wanted to,
+
+                return this.Next();
+            }
+
+            var nextPossiblyDistinctIndex = this.GetNextIndexWithDistinctPossibility(other);
+
+            if (nextPossiblyDistinctIndex == -1) {
+
+                // We cannot generate a string that is unique based upon its characters.
+                // We can only generate a string that is unique based upon its length.
+                // This leaves a branch with two options, (A) and (B)
+
+                // (A) If this StringGenerator is set with a constant length that is
+                // equal to the length of the 'other' string, we cannot generate a
+                // unique value and must throw an UnableToGeneratevalueException.
+
+                if (this.Minimum == this.Maximum && this.Minimum == other.Length) {
+                    throw new UnableToGenerateValueException(
+                        $"Unable to provide a {typeof(String).Name} that is distinct " +
+                        $"from an '{nameof(other)}' of '{other}'.",
+                        nameof(other)
+                    );
+                }
+
+                // (B) If this StringGenerator is not set with a constant length, we can
+                // generate a possible length that is our range - 1. If the length we
+                // generate is equal to the length of the 'other' string, add one.
+                // This guarantees the new string does not have the same length as
+                // the 'other' provided string.
+
+                var nextLength = this.NextInt32Inclusive(this.Minimum, this.Maximum - 1);
+
+                if (nextLength >= other.Length) {
+                    nextLength++;
+                }
+
+                return this.NextOfLength(nextLength);
+            }
+
+            // Easy case. If we randomly chose a length that is different than the
+            // length of the 'other' provided string, generate a string of that length.
+
+            var length = this.NextInt32Inclusive(this.Minimum, this.Maximum);
+
+            if (length != other.Length) {
+                return this.NextOfLength(length);
+            }
+
+            // Harder case. If we randomly chose a length that is equal than the length
+            // of the 'other' provided string, we have to specifically aim for a specific
+            // character discrepency.
+
             var buffer = new StringBuilder(length);
+            var isDistinct = false;
 
-            for (var character = 0; character < length; character++) {
-                var index = this.random.Next(this.characters.Length);
+            for (var index = 0; index < length; index++) {
+                char[] lookup = this.charactersLookup;
 
-                buffer.Append(this.characters[index]);
+                if (!isDistinct && nextPossiblyDistinctIndex == index) {
+                    nextPossiblyDistinctIndex =
+                        this.GetNextIndexWithDistinctPossibility(other, index);
+
+                    if (nextPossiblyDistinctIndex == -1) {
+                        // This is the last possible character that can be distinct.
+                        // Therefore, we will force it to be distinct by removing
+                        // all matching characters from the parent set.
+
+                        lookup = this.Characters.Where(c => c != other[index]).ToArray();
+                    }
+                }
+
+                buffer.Append(lookup[this.random.Next(lookup.Length)]);
+                isDistinct = isDistinct || buffer[index] != other[index];
             }
 
             return buffer.ToString();
+        }
+
+        private int GetNextIndexWithDistinctPossibility(string other, int currentIndex = -1) {
+            for (var index = currentIndex + 1; index < other.Length; index++) {
+                if (this.Characters.Any(c => c != other[index])) {
+                    return index;
+                }
+            }
+
+            return -1;
         }
 
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Xunit;
 
 namespace Peddler {
@@ -119,6 +120,32 @@ namespace Peddler {
             }
         }
 
+        public static IEnumerable<object[]> NextDistinct_Defaults_Data {
+            get {
+                yield return ToArray(String.Empty);
+                yield return ToArray(" ");
+                yield return ToArray("foo");
+                yield return ToArray(new String('a', 256));
+                yield return ToArray(new String('a', 10000));
+                yield return ToArray(new String(CharacterSets.AsciiExtended.First(), 5));
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(NextDistinct_Defaults_Data))]
+        public void NextDistinct_Defaults(String other) {
+            var characters = CharacterSets.AsciiPrintable;
+            var generator = new StringGenerator();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = generator.NextDistinct(other);
+
+                Assert.NotEqual(value, other);
+                Assert.InRange(value.Length, 0, 255);
+                Assert.DoesNotContain(value, character => !characters.Contains(character));
+            }
+        }
+
         [Theory]
         [InlineData(0)]
         [InlineData(1)]
@@ -130,6 +157,27 @@ namespace Peddler {
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
                 var value = generator.Next();
 
+                Assert.Equal(length, value.Length);
+                Assert.DoesNotContain(value, character => !characters.Contains(character));
+            }
+        }
+
+        [Theory]
+        [InlineData(3, "foo")]
+        [InlineData(5, "foo")]
+        [InlineData(2, "foobar")]
+        [InlineData(100, "barbizbuzzbooze")]
+        [InlineData(0, "a")]
+        [InlineData(3, "aa")]
+        [InlineData(2, "aaa")]
+        public void NextDistinct_WithLength(int length, String other) {
+            var characters = CharacterSets.AsciiPrintable;
+            var generator = new StringGenerator(length);
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = generator.NextDistinct(other);
+
+                Assert.NotEqual(value, other);
                 Assert.Equal(length, value.Length);
                 Assert.DoesNotContain(value, character => !characters.Contains(character));
             }
@@ -150,6 +198,52 @@ namespace Peddler {
             }
         }
 
+        public static IEnumerable<object[]> NextDistinct_WithLengthAndCharacters_Data {
+            get {
+                yield return ToArray(3, alphabet, "foo");
+                yield return ToArray(5, new HashSet<Char> { 'a' }, "foo");
+                yield return ToArray(2, new HashSet<Char> { 'a' }, "foobar");
+                yield return ToArray(100, CharacterSets.AsciiPrintable, "barbizbuzzbooze");
+                yield return ToArray(0, new HashSet<Char>{ 'a' }, "a");    // => ""
+                yield return ToArray(3, new HashSet<Char>{ 'a' }, "aa");   // => "aaa"
+                yield return ToArray(2, new HashSet<Char>{ 'a' }, "aaa");  // => "aa"
+                yield return ToArray(3, new HashSet<Char>{ 'a' }, "aab");  // => "aaa"
+                yield return ToArray(3, new HashSet<Char>{ 'a' }, "aba");  // => "aaa"
+                yield return ToArray(3, new HashSet<Char>{ 'a' }, "baa");  // => "aaa"
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(NextDistinct_WithLengthAndCharacters_Data))]
+        public void NextDistinct_WithLengthAndCharacters(
+            int length,
+            ISet<Char> characters,
+            String other) {
+
+            var generator = new StringGenerator(length, characters);
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = generator.NextDistinct(other);
+
+                Assert.NotEqual(value, other);
+                Assert.Equal(length, value.Length);
+                Assert.DoesNotContain(value, character => !characters.Contains(character));
+            }
+        }
+
+        [Fact]
+        public void NextDistinct_WithLengthAndCharacters_UnableToGenerateValueException() {
+            var length = 1;
+            var characters = new HashSet<Char> { 'a' };
+            var other = "a";
+
+            var generator = new StringGenerator(length, characters);
+
+            Assert.Throws<UnableToGenerateValueException>(
+                () => generator.NextDistinct(other)
+            );
+        }
+
         [Theory]
         [InlineData(0, 0)]
         [InlineData(0, 100)]
@@ -162,6 +256,30 @@ namespace Peddler {
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
                 var value = generator.Next();
 
+                Assert.InRange(value.Length, minimum, maximum);
+                Assert.DoesNotContain(value, character => !characters.Contains(character));
+            }
+        }
+
+
+        [Theory]
+        [InlineData(0, 100, "foo")]
+        [InlineData(100, 200, "barbizbuzzbooze")]
+        [InlineData(0, 10, "aaaaaaaaaa")]
+        [InlineData(0, 0, "a")]
+        [InlineData(2, 3, "aa")]
+        [InlineData(2, 3, "aaa")]
+        [InlineData(3, 3, "aab")]
+        [InlineData(3, 3, "aba")]
+        [InlineData(3, 3, "baa")]
+        public void NextDistinct_WithRange(int minimum, int maximum, String other) {
+            var characters = CharacterSets.AsciiPrintable;
+            var generator = new StringGenerator(minimum, maximum);
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = generator.NextDistinct(other);
+
+                Assert.NotEqual(value, other);
                 Assert.InRange(value.Length, minimum, maximum);
                 Assert.DoesNotContain(value, character => !characters.Contains(character));
             }
@@ -181,6 +299,60 @@ namespace Peddler {
                 Assert.InRange(value.Length, minimum, maximum);
                 Assert.DoesNotContain(value, character => !alphabet.Contains(character));
             }
+        }
+
+        public static IEnumerable<object[]> NextDistinct_WithRangeAndCharacters_Data {
+            get {
+                yield return ToArray(0, 100, alphabet, "foo");
+                yield return ToArray(5, 10, new HashSet<Char> { 'a' }, "foo");
+                yield return ToArray(1, 2, new HashSet<Char> { 'a' }, "foobar");
+                yield return ToArray(100, 200, CharacterSets.AsciiPrintable, "barbizbuzzbooze");
+                yield return ToArray(0, 100, new HashSet<Char> { 'a' }, new String('a', 100));
+                yield return ToArray(0, 0, new HashSet<Char>{ 'a' }, "a");    // => ""
+                yield return ToArray(2, 3, new HashSet<Char>{ 'a' }, "aa");   // => "aaa"
+                yield return ToArray(2, 3, new HashSet<Char>{ 'a' }, "aaa");  // => "aa"
+                yield return ToArray(3, 3, new HashSet<Char>{ 'a' }, "aab");  // => "aaa"
+                yield return ToArray(3, 3, new HashSet<Char>{ 'a' }, "aba");  // => "aaa"
+                yield return ToArray(3, 3, new HashSet<Char>{ 'a' }, "baa");  // => "aaa"
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(NextDistinct_WithRangeAndCharacters_Data))]
+        public void NextDistinct_WithRangeAndCharacters(
+            int minimum,
+            int maximum,
+            ISet<Char> characters,
+            String other) {
+
+            var generator = new StringGenerator(minimum, maximum, characters);
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = generator.NextDistinct(other);
+
+                Assert.NotEqual(value, other);
+                Assert.InRange(value.Length, minimum, maximum);
+                Assert.DoesNotContain(value, character => !characters.Contains(character));
+            }
+        }
+
+        [Fact]
+        public void NextDistinct_WithRangeAndCharacters_UnableToGenerateValueException() {
+            var length = 1;
+            var characters = new HashSet<Char> { 'a' };
+            var other = "a";
+
+            var generator = new StringGenerator(length, length, characters);
+
+            Assert.Throws<UnableToGenerateValueException>(
+                () => generator.NextDistinct(other)
+            );
+        }
+
+        // Syntactic sugar.
+        // 'yield return ToArray( ... )' is shorter than 'yield return new object[] { ... }'
+        private static object[] ToArray(params object[] objects) {
+            return objects;
         }
 
     }

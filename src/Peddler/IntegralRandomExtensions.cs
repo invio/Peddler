@@ -364,13 +364,6 @@ namespace Peddler {
                 throw new ArgumentNullException(nameof(random));
             }
 
-            if (maxValue < 0) {
-                throw new ArgumentOutOfRangeException(
-                    nameof(maxValue),
-                    $"'{nameof(maxValue)}' must be greater than zero."
-                );
-            }
-
             return (UInt16)random.Next((Int32)minValue, (Int32)maxValue);
         }
 
@@ -448,13 +441,6 @@ namespace Peddler {
         public static UInt32 NextUInt32(this Random random, UInt32 minValue, UInt32 maxValue) {
             if (random == null) {
                 throw new ArgumentNullException(nameof(random));
-            }
-
-            if (maxValue < 0) {
-                throw new ArgumentOutOfRangeException(
-                    nameof(maxValue),
-                    $"'{nameof(maxValue)}' must be greater than zero."
-                );
             }
 
             return (UInt32)random.NextUInt64((UInt64)minValue, (UInt64)maxValue);

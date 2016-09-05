@@ -101,8 +101,8 @@ namespace Peddler {
 
             if (low.CompareTo(high) >= 0) {
                 throw new ArgumentException(
-                    $"The {typeof(DateTime).Name} '{nameof(low)}' argument is earlier " +
-                    $"than the {typeof(DateTime).Name} '{nameof(high)}' argument.",
+                    $"The {typeof(DateTime).Name} '{nameof(low)}' argument must be " +
+                    $"earlier than the {typeof(DateTime).Name} '{nameof(high)}' argument.",
                     nameof(low)
                 );
             }

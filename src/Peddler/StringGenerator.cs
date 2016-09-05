@@ -207,11 +207,7 @@ namespace Peddler {
         }
 
         private int NextInt32Inclusive(int low, int high) {
-            if (high == Int32.MaxValue) {
-                return (Int32)this.random.NextInt64(low, (Int64)(high + 1));
-            } else {
-                return this.random.Next(low, high);
-            }
+            return (Int32)this.random.NextInt64(low, (Int64)(high + 1));
         }
 
         private String NextOfLength(int length) {

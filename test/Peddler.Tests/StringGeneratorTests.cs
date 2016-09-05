@@ -146,6 +146,15 @@ namespace Peddler {
             }
         }
 
+        [Fact]
+        public void NextDistinct_NullOther() {
+            var generator = new StringGenerator();
+
+            Assert.Throws<ArgumentNullException>(
+                () => generator.NextDistinct(null)
+            );
+        }
+
         [Theory]
         [InlineData(0)]
         [InlineData(1)]

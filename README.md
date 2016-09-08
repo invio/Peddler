@@ -85,7 +85,7 @@ Peddler also includes implementations for many of the basic data types of the .N
 | [UInt32](src/Peddler/UInt32Generator.cs) | X | X | X |   |
 | [Int64](src/Peddler/Int64Generator.cs) | X | X | X |   |
 | [UInt64](src/Peddler/UInt64Generator.cs) | X | X | X |   |
-| [Guid](src/Peddler/GuidGenerator.cs) | X |   |   |   |
+| [Guid](src/Peddler/GuidGenerator.cs) | X | X |   |   |
 | [DateTime](src/Peddler/DateTimeGenerator.cs) | X | X | X | Enforces consistent use of 'Kind' |
 | [String](src/Peddler/StringGenerator.cs) | X | X |   | Uses [`StringComparison.Ordinal`](https://msdn.microsoft.com/en-us/library/system.stringcomparison.aspx) rules |
 

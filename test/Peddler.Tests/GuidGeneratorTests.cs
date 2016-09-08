@@ -30,6 +30,24 @@ namespace Peddler {
             }
         }
 
+        [Fact]
+        public void NextDistinct_DuplicateGuid() {
+            var generator = new ConstantGuidGenerator();
+            var original = generator.Next();
+
+            Assert.Throws<UnableToGenerateValueException>(
+                () => generator.NextDistinct(original)
+            );
+        }
+
+        private class ConstantGuidGenerator : GuidGenerator {
+
+            public override Guid Next() {
+                return new Guid("1ab32a76-45dd-4e50-93d8-59642dcd8823");
+            }
+
+        }
+
     }
 
 }

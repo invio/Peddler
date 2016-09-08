@@ -15,7 +15,7 @@ namespace Peddler {
         ///   This utilizes the .NET Framework's built-in implementation of
         ///   <see cref="Guid" /> generation.
         /// </remarks>
-        public Guid Next() {
+        public virtual Guid Next() {
             return Guid.NewGuid();
         }
 

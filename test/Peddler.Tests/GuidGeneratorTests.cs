@@ -17,6 +17,19 @@ namespace Peddler {
 
         }
 
+        [Fact]
+        public void NextDistinct_NonEmptyDistinctGuids() {
+            var generator = new GuidGenerator();
+            var original = generator.Next();
+
+            for (var attempt = 0; attempt < NUMBER_OF_ATTEMPTS; attempt++) {
+                var distinct = generator.NextDistinct(original);
+
+                Assert.NotEqual(Guid.Empty, distinct);
+                Assert.NotEqual(original, distinct);
+            }
+        }
+
     }
 
 }

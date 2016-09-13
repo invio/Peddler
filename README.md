@@ -1,6 +1,6 @@
 # Peddler
 
-[![Appveyor](https://ci.appveyor.com/api/projects/status/fw9aocbumiafgfvt/branch/master?svg=true)](https://ci.appveyor.com/project/carusology/peddler/branch/master)
+[![Appveyor](https://ci.appveyor.com/api/projects/status/l8vetfa12dyu0q3b/branch/master?svg=true)](https://ci.appveyor.com/project/invio/peddler/branch/master)
 [![Travis CI](https://img.shields.io/travis/invio/Peddler.svg?maxAge=3600&label=travis)](https://travis-ci.org/invio/Peddler)
 [![NuGet](https://img.shields.io/nuget/v/Peddler.svg)](https://www.nuget.org/packages/Peddler/)
 [![Coverage](https://coveralls.io/repos/github/invio/Peddler/badge.svg?branch=master)](https://coveralls.io/github/invio/Peddler?branch=master)

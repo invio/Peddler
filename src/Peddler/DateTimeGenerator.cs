@@ -15,12 +15,6 @@ namespace Peddler {
     /// </remarks>
     public class DateTimeGenerator : IIntegralGenerator<DateTime> {
 
-        private static EqualityComparer<DateTime> defaultEqualityComparer { get; }
-
-        static DateTimeGenerator() {
-            defaultEqualityComparer = EqualityComparer<DateTime>.Default;
-        }
-
         private Int64Generator tickGenerator { get; }
 
         /// <summary>
@@ -49,10 +43,10 @@ namespace Peddler {
         ///   instances are equal in value.
         /// </summary>
         /// <remarks>
-        ///   It does not take into account the <see cref="DateTimeKind" />
+        ///   It does take into account the <see cref="DateTimeKind" />
         ///   restriction the <see cref="DateTimeGenerator"/> enforces.
         /// </remarks>
-        public IEqualityComparer<DateTime> EqualityComparer { get; } = defaultEqualityComparer;
+        public IEqualityComparer<DateTime> EqualityComparer { get; }
 
         /// <summary>
         ///   Instantiates a <see cref="DateTimeGenerator" /> that can create
@@ -129,6 +123,7 @@ namespace Peddler {
             this.Kind = low.Kind;
             this.Low = new DateTime(this.tickGenerator.Low, this.Kind);
             this.High = new DateTime(this.tickGenerator.High, this.Kind);
+            this.EqualityComparer = new KindSensitiveDateTimeComparer(this.Kind);
         }
 
         private DateTime NextImpl(Func<Int64> getNextTicks) {
@@ -139,8 +134,8 @@ namespace Peddler {
             if (other.Kind != this.Kind) {
                 throw new ArgumentException(
                     $"The {typeof(DateTimeKind).Name} of '{nameof(other)}' ({other.Kind:G}) " +
-                    $"did not match the '{typeof(DateTimeKind).Name}' of this " +
-                    $"typeof(typeof(DateTimeGenerator).Name) ({this.Kind:G}).",
+                    $"did not match the {typeof(DateTimeKind).Name} of this " +
+                    $"{typeof(DateTimeGenerator).Name} ({this.Kind:G}).",
                     nameof(other)
                 );
             }

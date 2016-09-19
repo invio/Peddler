@@ -11,7 +11,13 @@ namespace Peddler {
     /// </summary>
     public class StringGenerator : IDistinctGenerator<String> {
 
-        private static ISet<Char> defaultCharacters { get; } = CharacterSets.AsciiPrintable;
+        private static ISet<Char> defaultCharacters { get; }
+        private static StringComparer defaultComparer { get; }
+
+        static StringGenerator() {
+            defaultCharacters = CharacterSets.AsciiPrintable;
+            defaultComparer = StringComparer.Ordinal;
+        }
 
         private Random random { get; } = new Random();
         private char[] charactersLookup { get; }
@@ -33,6 +39,9 @@ namespace Peddler {
         ///   will utilize from when creating instances of <see cref="String" />.
         /// </summary>
         public ISet<Char> Characters { get; }
+
+        /// <inheritdoc />
+        public IEqualityComparer<String> EqualityComparer { get; } = defaultComparer;
 
         /// <summary>
         ///   Instantiates a <see cref="StringGenerator" /> that can create
@@ -273,11 +282,7 @@ namespace Peddler {
         ///   <see cref="Characters" /> property.
         /// </exception>
         public String NextDistinct(String other) {
-            if (other == null) {
-                throw new ArgumentNullException(nameof(other));
-            }
-
-            if (other.Length < this.Minimum || other.Length > this.Maximum) {
+            if (other == null || other.Length < this.Minimum || other.Length > this.Maximum) {
 
                 // In this context, we couldn't generate a matching string if we wanted to,
 

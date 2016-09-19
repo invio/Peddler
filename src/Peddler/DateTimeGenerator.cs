@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Peddler {
 
@@ -13,6 +14,12 @@ namespace Peddler {
     ///   the number of ticks used to represent its value.
     /// </remarks>
     public class DateTimeGenerator : IIntegralGenerator<DateTime> {
+
+        private static EqualityComparer<DateTime> defaultEqualityComparer { get; }
+
+        static DateTimeGenerator() {
+            defaultEqualityComparer = EqualityComparer<DateTime>.Default;
+        }
 
         private Int64Generator tickGenerator { get; }
 
@@ -36,6 +43,16 @@ namespace Peddler {
         ///   that can be created by this <see cref="DateTimeGenerator" />.
         /// </summary>
         public DateTime High { get; }
+
+        /// <summary>
+        ///   The comparison used to determine if two <see cref="DateTime" />
+        ///   instances are equal in value.
+        /// </summary>
+        /// <remarks>
+        ///   It does not take into account the <see cref="DateTimeKind" />
+        ///   restriction the <see cref="DateTimeGenerator"/> enforces.
+        /// </remarks>
+        public IEqualityComparer<DateTime> EqualityComparer { get; } = defaultEqualityComparer;
 
         /// <summary>
         ///   Instantiates a <see cref="DateTimeGenerator" /> that can create

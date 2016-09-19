@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Peddler {
 
@@ -7,6 +8,12 @@ namespace Peddler {
     ///   that are distinct (i.e. "not equal to") values of <typeparamref name="T"/>.
     /// </summary>
     public interface IDistinctGenerator<T> : IGenerator<T> {
+
+        /// <summary>
+        ///   A comparer that reflects the comparison used to determine if two instances
+        ///   of <typeparamref name="T" /> are considered distinct for this generator.
+        /// </summary>
+        IEqualityComparer<T> EqualityComparer { get; }
 
         /// <summary>
         ///   Creates a new instance of <typeparamref name="T"/> that is

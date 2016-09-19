@@ -12,9 +12,11 @@ namespace Peddler {
             var generator = new GuidGenerator();
 
             for (var attempt = 0; attempt < NUMBER_OF_ATTEMPTS; attempt++) {
-                Assert.NotEqual(Guid.Empty, generator.Next());
-            }
+                var value = generator.Next();
 
+                Assert.NotEqual(Guid.Empty, value);
+                Assert.True(generator.EqualityComparer.Equals(value, value));
+            }
         }
 
         [Fact]
@@ -27,6 +29,7 @@ namespace Peddler {
 
                 Assert.NotEqual(Guid.Empty, distinct);
                 Assert.NotEqual(original, distinct);
+                Assert.False(generator.EqualityComparer.Equals(original, distinct));
             }
         }
 

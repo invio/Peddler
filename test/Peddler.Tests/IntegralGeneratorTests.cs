@@ -102,6 +102,7 @@ namespace Peddler {
 
                 AssertGreaterThanOrEqualTo(value, generator.Low);
                 AssertLessThan(value, generator.High);
+                Assert.True(generator.EqualityComparer.Equals(value, value));
             }
         }
 
@@ -126,6 +127,7 @@ namespace Peddler {
 
                 AssertGreaterThanOrEqualTo(value, low);
                 AssertLessThan(value, generator.High);
+                Assert.True(generator.EqualityComparer.Equals(value, value));
             }
         }
 
@@ -153,6 +155,7 @@ namespace Peddler {
 
                 AssertGreaterThanOrEqualTo(value, low);
                 AssertLessThan(value, high);
+                Assert.True(generator.EqualityComparer.Equals(value, value));
             }
         }
 
@@ -172,6 +175,7 @@ namespace Peddler {
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
                 var nextValue = generator.NextDistinct(previousValue);
                 Assert.NotEqual(previousValue, nextValue);
+                Assert.False(generator.EqualityComparer.Equals(previousValue, nextValue));
                 previousValue = nextValue;
             }
         }
@@ -199,6 +203,7 @@ namespace Peddler {
 
                 AssertGreaterThanOrEqualTo(value, generator.Low);
                 AssertLessThan(value, generator.High);
+                Assert.False(generator.EqualityComparer.Equals(other, value));
             }
         }
 
@@ -214,6 +219,7 @@ namespace Peddler {
 
                 AssertGreaterThanOrEqualTo(value, generator.Low);
                 AssertLessThan(value, generator.High);
+                Assert.False(generator.EqualityComparer.Equals(other, value));
             }
         }
 

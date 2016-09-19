@@ -117,6 +117,7 @@ namespace Peddler {
 
                 Assert.InRange(value.Length, 0, 255);
                 Assert.DoesNotContain(value, character => !characters.Contains(character));
+                Assert.True(generator.EqualityComparer.Equals(value, value));
             }
         }
 
@@ -143,16 +144,22 @@ namespace Peddler {
                 Assert.NotEqual(value, other);
                 Assert.InRange(value.Length, 0, 255);
                 Assert.DoesNotContain(value, character => !characters.Contains(character));
+                Assert.False(generator.EqualityComparer.Equals(other, value));
             }
         }
 
         [Fact]
         public void NextDistinct_NullOther() {
+            const string other = null;
             var generator = new StringGenerator();
 
-            Assert.Throws<ArgumentNullException>(
-                () => generator.NextDistinct(null)
-            );
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = generator.NextDistinct(other);
+
+                Assert.NotEqual(value, other);
+                Assert.InRange(value.Length, 0, 255);
+                Assert.False(generator.EqualityComparer.Equals(other, value));
+            }
         }
 
         [Theory]
@@ -168,6 +175,7 @@ namespace Peddler {
 
                 Assert.Equal(length, value.Length);
                 Assert.DoesNotContain(value, character => !characters.Contains(character));
+                Assert.True(generator.EqualityComparer.Equals(value, value));
             }
         }
 
@@ -189,6 +197,7 @@ namespace Peddler {
                 Assert.NotEqual(value, other);
                 Assert.Equal(length, value.Length);
                 Assert.DoesNotContain(value, character => !characters.Contains(character));
+                Assert.False(generator.EqualityComparer.Equals(other, value));
             }
         }
 
@@ -204,6 +213,7 @@ namespace Peddler {
 
                 Assert.Equal(length, value.Length);
                 Assert.DoesNotContain(value, character => !alphabet.Contains(character));
+                Assert.True(generator.EqualityComparer.Equals(value, value));
             }
         }
 
@@ -237,6 +247,7 @@ namespace Peddler {
                 Assert.NotEqual(value, other);
                 Assert.Equal(length, value.Length);
                 Assert.DoesNotContain(value, character => !characters.Contains(character));
+                Assert.False(generator.EqualityComparer.Equals(other, value));
             }
         }
 
@@ -267,6 +278,7 @@ namespace Peddler {
 
                 Assert.InRange(value.Length, minimum, maximum);
                 Assert.DoesNotContain(value, character => !characters.Contains(character));
+                Assert.True(generator.EqualityComparer.Equals(value, value));
             }
         }
 
@@ -291,6 +303,7 @@ namespace Peddler {
                 Assert.NotEqual(value, other);
                 Assert.InRange(value.Length, minimum, maximum);
                 Assert.DoesNotContain(value, character => !characters.Contains(character));
+                Assert.False(generator.EqualityComparer.Equals(other, value));
             }
         }
 
@@ -307,6 +320,7 @@ namespace Peddler {
 
                 Assert.InRange(value.Length, minimum, maximum);
                 Assert.DoesNotContain(value, character => !alphabet.Contains(character));
+                Assert.True(generator.EqualityComparer.Equals(value, value));
             }
         }
 
@@ -342,6 +356,7 @@ namespace Peddler {
                 Assert.NotEqual(value, other);
                 Assert.InRange(value.Length, minimum, maximum);
                 Assert.DoesNotContain(value, character => !characters.Contains(character));
+                Assert.False(generator.EqualityComparer.Equals(other, value));
             }
         }
 

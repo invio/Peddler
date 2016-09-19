@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Peddler {
 
@@ -7,6 +8,13 @@ namespace Peddler {
     ///   greater than, less than, or equal to provided values of <typeparamref name="T"/>.
     /// </summary>
     public interface IComparableGenerator<T> : IDistinctGenerator<T> {
+
+        /// <summary>
+        ///   A comparer that reflects the comparison used to determine if one instance
+        ///   of <typeparamref name="T" /> is considered less than, equal to, or greater
+        ///   than another instance of <typeparamref name="T" />.
+        /// </summary>
+        IComparer<T> Comparer { get; }
 
         /// <summary>
         ///   Creates a new instance of <typeparamref name="T"/> that is

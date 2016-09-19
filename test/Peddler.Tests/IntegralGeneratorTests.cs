@@ -269,6 +269,7 @@ namespace Peddler {
                 AssertGreaterThan(value, other);
                 AssertGreaterThanOrEqualTo(value, generator.Low);
                 AssertLessThan(value, generator.High);
+                Assert.True(generator.Comparer.Compare(other, value) < 0);
             }
         }
 
@@ -318,6 +319,7 @@ namespace Peddler {
                 AssertGreaterThanOrEqualTo(value, other);
                 AssertGreaterThanOrEqualTo(value, generator.Low);
                 AssertLessThan(value, generator.High);
+                Assert.True(generator.Comparer.Compare(other, value) <= 0);
             }
         }
 
@@ -366,6 +368,7 @@ namespace Peddler {
                 AssertLessThan(value, other);
                 AssertGreaterThanOrEqualTo(value, generator.Low);
                 AssertLessThan(value, generator.High);
+                Assert.True(generator.Comparer.Compare(other, value) > 0);
             }
         }
 
@@ -415,6 +418,7 @@ namespace Peddler {
                 AssertLessThanOrEqualTo(value, other);
                 AssertGreaterThanOrEqualTo(value, generator.Low);
                 AssertLessThan(value, generator.High);
+                Assert.True(generator.Comparer.Compare(other, value) >= 0);
             }
         }
 

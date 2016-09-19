@@ -160,6 +160,35 @@ namespace Peddler {
             );
         }
 
+        [Fact]
+        public void EqualityComparer_MismatchedKind() {
+            var date = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local);
+            var generator = new DateTimeGenerator();
+
+            Assert.NotEqual(date.Kind, generator.Kind);
+
+            var comparer = generator.EqualityComparer;
+            Assert.Throws<ArgumentException>(
+                () => generator.EqualityComparer.Equals(date, date)
+            );
+
+            Assert.Throws<ArgumentException>(
+                () => generator.EqualityComparer.GetHashCode(date)
+            );
+        }
+
+        [Fact]
+        public void Comparer_MismatchedKind() {
+            var date = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local);
+            var generator = new DateTimeGenerator();
+
+            Assert.NotEqual(date.Kind, generator.Kind);
+
+            var comparer = generator.EqualityComparer;
+            Assert.Throws<ArgumentException>(
+                () => generator.Comparer.Compare(date, date)
+            );
+        }
 
     }
 

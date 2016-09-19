@@ -49,6 +49,17 @@ namespace Peddler {
         public IEqualityComparer<DateTime> EqualityComparer { get; }
 
         /// <summary>
+        ///   The comparison used to determine if one <see cref="DateTime" />
+        ///   instance is earlier than, the same time as, or later than another
+        ///   <see cref="DateTime" /> instance.
+        /// </summary>
+        /// <remarks>
+        ///   It does take into account the <see cref="DateTimeKind" />
+        ///   restriction the <see cref="DateTimeGenerator"/> enforces.
+        /// </remarks>
+        public IComparer<DateTime> Comparer { get; }
+
+        /// <summary>
         ///   Instantiates a <see cref="DateTimeGenerator" /> that can create
         ///   <see cref="DateTime" /> values which range from
         ///   <see cref="DateTime.MinValue" /> to <see cref="DateTime.MaxValue" />.
@@ -123,7 +134,10 @@ namespace Peddler {
             this.Kind = low.Kind;
             this.Low = new DateTime(this.tickGenerator.Low, this.Kind);
             this.High = new DateTime(this.tickGenerator.High, this.Kind);
-            this.EqualityComparer = new KindSensitiveDateTimeComparer(this.Kind);
+
+            var comparer = new KindSensitiveDateTimeComparer(this.Kind);
+            this.EqualityComparer = comparer;
+            this.Comparer = comparer;
         }
 
         private DateTime NextImpl(Func<Int64> getNextTicks) {

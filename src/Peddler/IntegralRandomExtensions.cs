@@ -3,24 +3,24 @@ using System;
 namespace Peddler {
 
     /// <summary>
-    ///   A collection of extension methods for the <see cref="System.Random" /> class
-    ///   that provide the ability to generate any integral type in using APIs that
-    ///   are identical to <see cref="System.Random.Next(int, int)" />,
-    ///   <see cref="System.Random.Next(int)" />, and <see cref="System.Random.Next()" />.
+    ///   A collection of extension methods for the <see cref="Random" /> class
+    ///   that provide the ability to generate any integral type in using APIs
+    ///   that are identical to <see cref="Random.Next(int, int)" />,
+    ///   <see cref="Random.Next(int)" />, and <see cref="Random.Next()" />.
     /// </summary>
     public static class IntegralRandomExtensions {
 
         /// <summary>
-        ///   Creates a random <see cref="System.SByte" /> with a value between
-        ///   zero and <see cref="System.SByte.MaxValue" />.
+        ///   Creates a random <see cref="SByte" /> with a value between
+        ///   zero and <see cref="SByte.MaxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.SByte" /> that was randomly generated.
+        ///   The <see cref="SByte" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
         public static SByte NextSByte(this Random random) {
@@ -32,23 +32,23 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.SByte" /> with a value between
+        ///   Creates a random <see cref="SByte" /> with a value between
         ///   zero and <paramref name="maxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <param name="maxValue">
-        ///   The upper, exclusive boundary for the <see cref="System.SByte" />
+        ///   The upper, exclusive boundary for the <see cref="SByte" />
         ///   that will be randomly generated.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.SByte" /> that was randomly generated.
+        ///   The <see cref="SByte" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         ///   Thrown when <paramref name="maxValue" /> is less than zero.
         /// </exception>
         public static SByte NextSByte(this Random random, SByte maxValue) {
@@ -67,27 +67,27 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.SByte" /> with a value between
+        ///   Creates a random <see cref="SByte" /> with a value between
         ///   <paramref name="minValue" /> and <paramref name="maxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <param name="minValue">
-        ///   The lower, inclusive boundary for the <see cref="System.SByte" />
+        ///   The lower, inclusive boundary for the <see cref="SByte" />
         ///   that will be randomly generated.
         /// </param>
         /// <param name="maxValue">
-        ///   The upper, exclusive boundary for the <see cref="System.SByte" />
+        ///   The upper, exclusive boundary for the <see cref="SByte" />
         ///   that will be randomly generated.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.SByte" /> that was randomly generated.
+        ///   The <see cref="SByte" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         ///   Thrown when <paramref name="minValue" /> is greater than
         ///   <paramref name="maxValue" />.
         /// </exception>
@@ -107,16 +107,16 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.Byte" /> with a value between
-        ///   zero and <see cref="System.Byte.MaxValue" />.
+        ///   Creates a random <see cref="Byte" /> with a value between
+        ///   zero and <see cref="Byte.MaxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.Byte" /> that was randomly generated.
+        ///   The <see cref="Byte" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
         public static Byte NextByte(this Random random) {
@@ -128,20 +128,20 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.Byte" /> with a value between
+        ///   Creates a random <see cref="Byte" /> with a value between
         ///   zero and <paramref name="maxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <param name="maxValue">
-        ///   The upper, exclusive boundary for the <see cref="System.Byte" />
+        ///   The upper, exclusive boundary for the <see cref="Byte" />
         ///   that will be randomly generated.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.Byte" /> that was randomly generated.
+        ///   The <see cref="Byte" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
         public static Byte NextByte(this Random random, Byte maxValue) {
@@ -153,27 +153,27 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.Byte" /> with a value between
+        ///   Creates a random <see cref="Byte" /> with a value between
         ///   <paramref name="minValue" /> and <paramref name="maxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <param name="minValue">
-        ///   The lower, inclusive boundary for the <see cref="System.Byte" />
+        ///   The lower, inclusive boundary for the <see cref="Byte" />
         ///   that will be randomly generated.
         /// </param>
         /// <param name="maxValue">
-        ///   The upper, exclusive boundary for the <see cref="System.Byte" />
+        ///   The upper, exclusive boundary for the <see cref="Byte" />
         ///   that will be randomly generated.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.Byte" /> that was randomly generated.
+        ///   The <see cref="Byte" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         ///   Thrown when <paramref name="minValue" /> is greater than
         ///   <paramref name="maxValue" />.
         /// </exception>
@@ -193,16 +193,16 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.Int16" /> with a value between
-        ///   zero and <see cref="System.Int16.MaxValue" />.
+        ///   Creates a random <see cref="Int16" /> with a value between
+        ///   zero and <see cref="Int16.MaxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.Int16" /> that was randomly generated.
+        ///   The <see cref="Int16" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
         public static Int16 NextInt16(this Random random) {
@@ -214,23 +214,23 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.Int16" /> with a value between
+        ///   Creates a random <see cref="Int16" /> with a value between
         ///   zero and <paramref name="maxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <param name="maxValue">
-        ///   The upper, exclusive boundary for the <see cref="System.Int16" />
+        ///   The upper, exclusive boundary for the <see cref="Int16" />
         ///   that will be randomly generated.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.Int16" /> that was randomly generated.
+        ///   The <see cref="Int16" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         ///   Thrown when <paramref name="maxValue" /> is less than zero.
         /// </exception>
         public static Int16 NextInt16(this Random random, Int16 maxValue) {
@@ -249,27 +249,27 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.Int16" /> with a value between
+        ///   Creates a random <see cref="Int16" /> with a value between
         ///   <paramref name="minValue" /> and <paramref name="maxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <param name="minValue">
-        ///   The lower, inclusive boundary for the <see cref="System.Int16" />
+        ///   The lower, inclusive boundary for the <see cref="Int16" />
         ///   that will be randomly generated.
         /// </param>
         /// <param name="maxValue">
-        ///   The upper, exclusive boundary for the <see cref="System.Int16" />
+        ///   The upper, exclusive boundary for the <see cref="Int16" />
         ///   that will be randomly generated.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.Int16" /> that was randomly generated.
+        ///   The <see cref="Int16" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         ///   Thrown when <paramref name="minValue" /> is greater than
         ///   <paramref name="maxValue" />.
         /// </exception>
@@ -289,16 +289,16 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.UInt16" /> with a value between
-        ///   zero and <see cref="System.UInt16.MaxValue" />.
+        ///   Creates a random <see cref="UInt16" /> with a value between
+        ///   zero and <see cref="UInt16.MaxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.UInt16" /> that was randomly generated.
+        ///   The <see cref="UInt16" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
         public static UInt16 NextUInt16(this Random random) {
@@ -310,20 +310,20 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.UInt16" /> with a value between
+        ///   Creates a random <see cref="UInt16" /> with a value between
         ///   zero and <paramref name="maxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <param name="maxValue">
-        ///   The upper, exclusive boundary for the <see cref="System.UInt16" />
+        ///   The upper, exclusive boundary for the <see cref="UInt16" />
         ///   that will be randomly generated.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.UInt16" /> that was randomly generated.
+        ///   The <see cref="UInt16" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
         public static UInt16 NextUInt16(this Random random, UInt16 maxValue) {
@@ -335,27 +335,27 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.UInt16" /> with a value between
+        ///   Creates a random <see cref="UInt16" /> with a value between
         ///   <paramref name="minValue" /> and <paramref name="maxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <param name="minValue">
-        ///   The lower, inclusive boundary for the <see cref="System.UInt16" />
+        ///   The lower, inclusive boundary for the <see cref="UInt16" />
         ///   that will be randomly generated.
         /// </param>
         /// <param name="maxValue">
-        ///   The upper, exclusive boundary for the <see cref="System.UInt16" />
+        ///   The upper, exclusive boundary for the <see cref="UInt16" />
         ///   that will be randomly generated.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.UInt16" /> that was randomly generated.
+        ///   The <see cref="UInt16" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         ///   Thrown when <paramref name="minValue" /> is greater than
         ///   <paramref name="maxValue" />.
         /// </exception>
@@ -368,16 +368,16 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.UInt32" /> with a value between
-        ///   zero and <see cref="System.UInt32.MaxValue" />.
+        ///   Creates a random <see cref="UInt32" /> with a value between
+        ///   zero and <see cref="UInt32.MaxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.UInt32" /> that was randomly generated.
+        ///   The <see cref="UInt32" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
         public static UInt32 NextUInt32(this Random random) {
@@ -389,20 +389,20 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.UInt32" /> with a value between
+        ///   Creates a random <see cref="UInt32" /> with a value between
         ///   zero and <paramref name="maxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <param name="maxValue">
-        ///   The upper, exclusive boundary for the <see cref="System.UInt32" />
+        ///   The upper, exclusive boundary for the <see cref="UInt32" />
         ///   that will be randomly generated.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.UInt32" /> that was randomly generated.
+        ///   The <see cref="UInt32" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
         public static UInt32 NextUInt32(this Random random, UInt32 maxValue) {
@@ -414,27 +414,27 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.UInt32" /> with a value between
+        ///   Creates a random <see cref="UInt32" /> with a value between
         ///   <paramref name="minValue" /> and <paramref name="maxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <param name="minValue">
-        ///   The lower, inclusive boundary for the <see cref="System.UInt32" />
+        ///   The lower, inclusive boundary for the <see cref="UInt32" />
         ///   that will be randomly generated.
         /// </param>
         /// <param name="maxValue">
-        ///   The upper, exclusive boundary for the <see cref="System.UInt32" />
+        ///   The upper, exclusive boundary for the <see cref="UInt32" />
         ///   that will be randomly generated.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.UInt32" /> that was randomly generated.
+        ///   The <see cref="UInt32" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         ///   Thrown when <paramref name="minValue" /> is greater than
         ///   <paramref name="maxValue" />.
         /// </exception>
@@ -447,16 +447,16 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.Int64" /> with a value between
-        ///   zero and <see cref="System.Int64.MaxValue" />.
+        ///   Creates a random <see cref="Int64" /> with a value between
+        ///   zero and <see cref="Int64.MaxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.Int64" /> that was randomly generated.
+        ///   The <see cref="Int64" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
         public static Int64 NextInt64(this Random random) {
@@ -468,23 +468,23 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.Int64" /> with a value between
+        ///   Creates a random <see cref="Int64" /> with a value between
         ///   zero and <paramref name="maxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <param name="maxValue">
-        ///   The upper, exclusive boundary for the <see cref="System.Int64" />
+        ///   The upper, exclusive boundary for the <see cref="Int64" />
         ///   that will be randomly generated.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.Int64" /> that was randomly generated.
+        ///   The <see cref="Int64" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         ///   Thrown when <paramref name="maxValue" /> is less than zero.
         /// </exception>
         public static Int64 NextInt64(this Random random, Int64 maxValue) {
@@ -503,27 +503,27 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.Int64" /> with a value between
+        ///   Creates a random <see cref="Int64" /> with a value between
         ///   <paramref name="minValue" /> and <paramref name="maxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <param name="minValue">
-        ///   The lower, inclusive boundary for the <see cref="System.Int64" />
+        ///   The lower, inclusive boundary for the <see cref="Int64" />
         ///   that will be randomly generated.
         /// </param>
         /// <param name="maxValue">
-        ///   The upper, exclusive boundary for the <see cref="System.Int64" />
+        ///   The upper, exclusive boundary for the <see cref="Int64" />
         ///   that will be randomly generated.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.Int64" /> that was randomly generated.
+        ///   The <see cref="Int64" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         ///   Thrown when <paramref name="minValue" /> is greater than
         ///   <paramref name="maxValue" />.
         /// </exception>
@@ -545,16 +545,16 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.UInt64" /> with a value between
-        ///   zero and <see cref="System.UInt64.MaxValue" />.
+        ///   Creates a random <see cref="UInt64" /> with a value between
+        ///   zero and <see cref="UInt64.MaxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.UInt64" /> that was randomly generated.
+        ///   The <see cref="UInt64" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
         public static UInt64 NextUInt64(this Random random) {
@@ -566,20 +566,20 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.UInt64" /> with a value between
+        ///   Creates a random <see cref="UInt64" /> with a value between
         ///   zero and <paramref name="maxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <param name="maxValue">
-        ///   The upper, exclusive boundary for the <see cref="System.UInt64" />
+        ///   The upper, exclusive boundary for the <see cref="UInt64" />
         ///   that will be randomly generated.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.UInt64" /> that was randomly generated.
+        ///   The <see cref="UInt64" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
         public static UInt64 NextUInt64(this Random random, UInt64 maxValue) {
@@ -591,27 +591,27 @@ namespace Peddler {
         }
 
         /// <summary>
-        ///   Creates a random <see cref="System.UInt64" /> with a value between
+        ///   Creates a random <see cref="UInt64" /> with a value between
         ///   <paramref name="minValue" /> and <paramref name="maxValue" />.
         /// </summary>
         /// <param name="random">
-        ///   The <see cref="System.Random" /> instance being used via this extension method.
+        ///   The <see cref="Random" /> instance being used via this extension method.
         /// </param>
         /// <param name="minValue">
-        ///   The lower, inclusive boundary for the <see cref="System.UInt64" />
+        ///   The lower, inclusive boundary for the <see cref="UInt64" />
         ///   that will be randomly generated.
         /// </param>
         /// <param name="maxValue">
-        ///   The upper, exclusive boundary for the <see cref="System.UInt64" />
+        ///   The upper, exclusive boundary for the <see cref="UInt64" />
         ///   that will be randomly generated.
         /// </param>
         /// <returns>
-        ///   The <see cref="System.UInt64" /> that was randomly generated.
+        ///   The <see cref="UInt64" /> that was randomly generated.
         /// </returns>
-        /// <exception cref="System.ArgumentNullException">
+        /// <exception cref="ArgumentNullException">
         ///   Thrown when <paramref name="random" /> is null.
         /// </exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">
+        /// <exception cref="ArgumentOutOfRangeException">
         ///   Thrown when <paramref name="minValue" /> is greater than
         ///   <paramref name="maxValue" />.
         /// </exception>

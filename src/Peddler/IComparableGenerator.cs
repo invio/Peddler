@@ -6,7 +6,7 @@ namespace Peddler {
     ///   A common interface for generating values of type <typeparamref name="T"/> that are
     ///   greater than, less than, or equal to provided values of <typeparamref name="T"/>.
     /// </summary>
-    public interface IComparableGenerator<T> {
+    public interface IComparableGenerator<T> : IDistinctGenerator<T> {
 
         /// <summary>
         ///   Creates a new instance of <typeparamref name="T"/> that is

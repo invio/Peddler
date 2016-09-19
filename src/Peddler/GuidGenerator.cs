@@ -3,10 +3,10 @@ using System;
 namespace Peddler {
 
     /// <summary>
-    ///   A basic implementation of <see cref="IGenerator{Guid}" /> and
-    ///   <see cref="IDistinctGenerator{Guid}" /> for creating instances of <see cref="Guid" />.
+    ///   A basic implementation of <see cref="IDistinctGenerator{Guid}" />
+    ///   for creating instances of <see cref="Guid" />.
     /// </summary>
-    public class GuidGenerator : IGenerator<Guid>, IDistinctGenerator<Guid> {
+    public class GuidGenerator : IDistinctGenerator<Guid> {
 
         /// <summary>
         ///   Generates a new, non-empty <see cref="Guid" /> instance.

@@ -7,8 +7,7 @@ namespace Peddler {
     ///   represented as an integer, such as <see cref="Int32" />, <see cref="Byte" />,
     ///   <see cref="DateTime" /> (via ticks), or <see cref="System.Char" />.
     /// </summary>
-    public interface IIntegralGenerator<TIntegral> :
-        IGenerator<TIntegral>, IDistinctGenerator<TIntegral>, IComparableGenerator<TIntegral> {
+    public interface IIntegralGenerator<TIntegral> : IComparableGenerator<TIntegral> {
 
         /// <summary>
         ///   The inclusive, lower <typeparamref name="TIntegral" /> boundary for this generator.

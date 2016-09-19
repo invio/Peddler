@@ -9,7 +9,7 @@ namespace Peddler {
     /// <summary>
     ///   A generator for non-nullable strings of various lengths and characters.
     /// </summary>
-    public class StringGenerator : IGenerator<String>, IDistinctGenerator<String> {
+    public class StringGenerator : IDistinctGenerator<String> {
 
         private static ISet<Char> defaultCharacters { get; } = CharacterSets.AsciiPrintable;
 

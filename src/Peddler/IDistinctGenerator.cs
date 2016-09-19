@@ -6,7 +6,7 @@ namespace Peddler {
     ///   A common interface for generating values of type <typeparamref name="T"/>
     ///   that are distinct (i.e. "not equal to") values of <typeparamref name="T"/>.
     /// </summary>
-    public interface IDistinctGenerator<T>{
+    public interface IDistinctGenerator<T> : IGenerator<T> {
 
         /// <summary>
         ///   Creates a new instance of <typeparamref name="T"/> that is

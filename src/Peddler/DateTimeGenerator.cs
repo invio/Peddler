@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Peddler {
 
@@ -36,6 +37,27 @@ namespace Peddler {
         ///   that can be created by this <see cref="DateTimeGenerator" />.
         /// </summary>
         public DateTime High { get; }
+
+        /// <summary>
+        ///   The comparison used to determine if two <see cref="DateTime" />
+        ///   instances are equal in value.
+        /// </summary>
+        /// <remarks>
+        ///   It does take into account the <see cref="DateTimeKind" />
+        ///   restriction the <see cref="DateTimeGenerator"/> enforces.
+        /// </remarks>
+        public IEqualityComparer<DateTime> EqualityComparer { get; }
+
+        /// <summary>
+        ///   The comparison used to determine if one <see cref="DateTime" />
+        ///   instance is earlier than, the same time as, or later than another
+        ///   <see cref="DateTime" /> instance.
+        /// </summary>
+        /// <remarks>
+        ///   It does take into account the <see cref="DateTimeKind" />
+        ///   restriction the <see cref="DateTimeGenerator"/> enforces.
+        /// </remarks>
+        public IComparer<DateTime> Comparer { get; }
 
         /// <summary>
         ///   Instantiates a <see cref="DateTimeGenerator" /> that can create
@@ -112,6 +134,10 @@ namespace Peddler {
             this.Kind = low.Kind;
             this.Low = new DateTime(this.tickGenerator.Low, this.Kind);
             this.High = new DateTime(this.tickGenerator.High, this.Kind);
+
+            var comparer = new KindSensitiveDateTimeComparer(this.Kind);
+            this.EqualityComparer = comparer;
+            this.Comparer = comparer;
         }
 
         private DateTime NextImpl(Func<Int64> getNextTicks) {
@@ -122,8 +148,8 @@ namespace Peddler {
             if (other.Kind != this.Kind) {
                 throw new ArgumentException(
                     $"The {typeof(DateTimeKind).Name} of '{nameof(other)}' ({other.Kind:G}) " +
-                    $"did not match the '{typeof(DateTimeKind).Name}' of this " +
-                    $"typeof(typeof(DateTimeGenerator).Name) ({this.Kind:G}).",
+                    $"did not match the {typeof(DateTimeKind).Name} of this " +
+                    $"{typeof(DateTimeGenerator).Name} ({this.Kind:G}).",
                     nameof(other)
                 );
             }

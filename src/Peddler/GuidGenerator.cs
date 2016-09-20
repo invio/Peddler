@@ -1,12 +1,22 @@
 using System;
+using System.Collections.Generic;
 
 namespace Peddler {
 
     /// <summary>
-    ///   A basic implementation of <see cref="IGenerator{Guid}" /> and
-    ///   <see cref="IDistinctGenerator{Guid}" /> for creating instances of <see cref="Guid" />.
+    ///   A basic implementation of <see cref="IDistinctGenerator{Guid}" />
+    ///   for creating instances of <see cref="Guid" />.
     /// </summary>
-    public class GuidGenerator : IGenerator<Guid>, IDistinctGenerator<Guid> {
+    public class GuidGenerator : IDistinctGenerator<Guid> {
+
+        private static IEqualityComparer<Guid> defaultEqualityComparer { get; }
+
+        static GuidGenerator() {
+            defaultEqualityComparer = EqualityComparer<Guid>.Default;
+        }
+
+        /// <inheritdoc />
+        public IEqualityComparer<Guid> EqualityComparer { get; } = defaultEqualityComparer;
 
         /// <summary>
         ///   Generates a new, non-empty <see cref="Guid" /> instance.

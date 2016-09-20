@@ -38,7 +38,7 @@ public static void Main(string[] args) {
 ```
 
 ### [`IDistinctGenerator<T>`](src/Peddler/IDistinctGenerator.cs)
-This generates random values of `T` when the caller invokes its `NextDistinct(T)` method. The resultant value of `T` is guaranteed to be distinct from (or "not equal to") the provided value of `T`. Example:
+This generates random values of `T` when the caller invokes its `NextDistinct(T)` method. The resultant value of `T` is guaranteed to be distinct from (or "not equal to") the provided value of `T`. This interface inherits from `IGenerator<T>`. Example:
 ```cs
 using Peddler;
 
@@ -55,8 +55,7 @@ public static void Main(string[] args) {
 ```
 
 ### [`IComparableGenerator<T>`](src/Peddler/IComparableGenerator.cs)
-This generates random values of `T` when the caller invokes one of its `NextLessThan(T)`, `NextLessThanOrEqualTo(T)`, `NextGreaterThan(T)`, or `NextGreaterThanOrEqualTo(T)` methods. Depending upon which method is used, the resultant value of `T` is guaranteed to be greater than, less than, or equal to the provided value of `T`. Example:
-
+This generates random values of `T` when the caller invokes one of its `NextLessThan(T)`, `NextLessThanOrEqualTo(T)`, `NextGreaterThan(T)`, or `NextGreaterThanOrEqualTo(T)` methods. Depending upon which method is used, the resultant value of `T` is guaranteed to be greater than, less than, or equal to the provided value of `T`. This interface inherits from `IDistinctGenerator<T>`. Example:
 ```cs
 using Peddler;
 
@@ -72,8 +71,8 @@ public static void Main(string[] args) {
 }
 ```
 
-## Implementations
-Peddler also includes implementations for many of the basic data types of the .NET Framework. While you can always create (or submit a pull request with) your own variant of any of these data types, the flexibility provided by the various constructors on each of these implementations will fill most use cases for raw, randomized data generation.
+## Base Implementations
+Peddler includes implementations for many of the basic data types of the .NET Framework. While you can always create (or submit a pull request with) your own variant of any of these data types, the flexibility provided by the various constructors on each of these implementations will fill most use cases for raw, randomized data generation.
 
 | Type | `IGenerator<T>` | `IDistinctGenerator<T>` | `IComparableGenerator<T>` | Notes |
 | ---- |:---------------:|:-----------------------:|:-------------------------:| ----- |
@@ -86,8 +85,18 @@ Peddler also includes implementations for many of the basic data types of the .N
 | [Int64](src/Peddler/Int64Generator.cs) | X | X | X |   |
 | [UInt64](src/Peddler/UInt64Generator.cs) | X | X | X |   |
 | [Guid](src/Peddler/GuidGenerator.cs) | X | X |   |   |
-| [DateTime](src/Peddler/DateTimeGenerator.cs) | X | X | X | Enforces consistent use of 'Kind' |
+| [DateTime](src/Peddler/DateTimeGenerator.cs) | X | X | X | Enforces consistent use of [`DateTimeKind`](https://msdn.microsoft.com/en-us/library/shx7s921.aspx) |
 | [String](src/Peddler/StringGenerator.cs) | X | X |   | Uses [`StringComparison.Ordinal`](https://msdn.microsoft.com/en-us/library/system.stringcomparison.aspx) rules |
+
+## Wrapper Implementations
+Peddler also includes implementations that wrap around base implementations in order to mutate their functionality. For example, a caller may want to periodically produce null, or convert value type `T` into `Nullable<T>`, without having to write a whole new generator. These implementations can wrap around the base implementation types to mutate their underlying behavior.
+
+| Type | `IGenerator<T>` | `IDistinctGenerator<T>` | `IComparableGenerator<T>` | Notes |
+| ---- |:---------------:|:-----------------------:|:-------------------------:| ----- |
+| [MaybeDefault<T>](src/Peddler/MaybeDefaultGenerator.cs) | X | | | Periodically returns `default(T)` based upon an injected percentage
+| [MaybeDefaultDistinct<T>](src/Peddler/MaybeDefaultDistinctGenerator.cs) | X | X | | Periodically returns `default(T)` based upon an injected percentage
+| [MaybeDefaultComparable<T>](src/Peddler/MaybeDefaultComparableGenerator.cs) | X | X | X | Periodically returns `default(T)` based upon an injected percentage
+
 
 ## Constraints
 

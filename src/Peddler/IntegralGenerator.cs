@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Peddler {
 
@@ -10,11 +11,25 @@ namespace Peddler {
     public abstract class IntegralGenerator<TIntegral> : IIntegralGenerator<TIntegral>
         where TIntegral : struct, IEquatable<TIntegral>, IComparable<TIntegral> {
 
+        private static EqualityComparer<TIntegral> defaultEqualityComparer { get; }
+        private static Comparer<TIntegral> defaultComparer { get; }
+
+        static IntegralGenerator() {
+            defaultEqualityComparer = EqualityComparer<TIntegral>.Default;
+            defaultComparer = Comparer<TIntegral>.Default;
+        }
+
         /// <inheritdoc />
         public TIntegral Low { get; }
 
         /// <inheritdoc />
         public TIntegral High { get; }
+
+        /// <inheritdoc />
+        public IEqualityComparer<TIntegral> EqualityComparer { get; } = defaultEqualityComparer;
+
+        /// <inhericdoc />
+        public IComparer<TIntegral> Comparer { get; } = defaultComparer;
 
         /// <summary>
         ///   Instantiates an <see cref="IntegralGenerator{T}" /> that will create

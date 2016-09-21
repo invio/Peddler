@@ -96,6 +96,9 @@ Peddler also includes implementations that wrap around base implementations in o
 | [MaybeDefault<T>](src/Peddler/MaybeDefaultGenerator.cs) | X | | | Periodically returns `default(T)` based upon an injected percentage
 | [MaybeDefaultDistinct<T>](src/Peddler/MaybeDefaultDistinctGenerator.cs) | X | X | | Periodically returns `default(T)` based upon an injected percentage
 | [MaybeDefaultComparable<T>](src/Peddler/MaybeDefaultComparableGenerator.cs) | X | X | X | Periodically returns `default(T)` based upon an injected percentage
+| [Nullable<T>](src/Peddler/NullableGenerator.cs) | X | | | Converts `<T>` to `Nullable<T>`
+| [NullableDistinct<T>](src/Peddler/NullableDistinctGenerator.cs) | X | X | | Converts `<T>` to `Nullable<T>`
+| [NullableComparable<T>](src/Peddler/NullableComparableGenerator.cs) | X | X | X | Converts `<T>` to `Nullable<T>`
 
 
 ## Constraints

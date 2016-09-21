@@ -60,6 +60,9 @@ exec { & dotnet build .\test\Peddler.Tests }
 $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
 $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
 
-exec { & dotnet test .\test\Peddler.Tests -c Release }
+#  Note from Caruso (9/21/2016):
+#    Appveyor does not appear to be able to test .NET Framework 4.6.2 with xUnit.
+#    So while we're building in 4.6.2, but we are not running tests in 4.6.2
+exec { & dotnet test .\test\Peddler.Tests -c Release -f netcoreapp1.0 }
 
 exec { & dotnet pack .\src\Peddler -c Release -o .\artifacts }

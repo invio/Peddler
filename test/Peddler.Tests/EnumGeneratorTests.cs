@@ -153,7 +153,110 @@ namespace Peddler {
             }
         }
 
+        [Fact]
+        public void NextDistinct_DefaultValues_OneValueAllowed() {
+            var generator = new EnumGenerator<OneEnum>();
+
+            Assert.Throws<UnableToGenerateValueException>(
+                () => generator.NextDistinct(OneEnum.One)
+            );
+        }
+
+        [Theory]
+        [InlineData(ValidEnum.Default, ValidEnum.One)]
+        [InlineData(ValidEnum.One, ValidEnum.Default)]
+        [InlineData(ValidEnum.One, ValidEnum.Two)]
+        public void NextDistinct_SpecificValues_OneValueAllowed_DifferentValue(
+            ValidEnum allowed,
+            ValidEnum different) {
+
+            var values = new HashSet<ValidEnum> { allowed };
+            var generator = new EnumGenerator<ValidEnum>(values);
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = generator.NextDistinct(different);
+
+                Assert.NotEqual(different, value);
+                Assert.False(generator.EqualityComparer.Equals(different, value));
+
+                Assert.Equal(allowed, value);
+                Assert.True(generator.EqualityComparer.Equals(allowed, value));
+            }
+        }
+
+        [Theory]
+        [InlineData(ValidEnum.Default)]
+        [InlineData(ValidEnum.One)]
+        public void NextDistinct_SpecificValues_OneValueAllowed_SameValue(ValidEnum exclusive) {
+            var values = new HashSet<ValidEnum> { exclusive };
+            var generator = new EnumGenerator<ValidEnum>(values);
+
+            Assert.Throws<UnableToGenerateValueException>(
+                () => generator.NextDistinct(exclusive)
+            );
+        }
+
+        public static IEnumerable<object[]> NextDistinct_SpecificValues_Data {
+            get {
+                return new List<object[]> {
+                    new object[] {
+                        new HashSet<ValidEnum> { ValidEnum.Default, ValidEnum.Five }
+                    },
+                    new object[] {
+                        new HashSet<ValidEnum> { ValidEnum.One, ValidEnum.Two }
+                    },
+                    new object[] {
+                        new HashSet<ValidEnum> {
+                            ValidEnum.Default,
+                            ValidEnum.One,
+                            ValidEnum.Two,
+                            ValidEnum.Three,
+                            ValidEnum.Four,
+                            ValidEnum.Five
+                        }
+                    }
+                };
+            }
+        }
+
+        [Fact]
+        public void NextDistinct_DefaultValues() {
+            var generator = new EnumGenerator<ValidEnum>();
+            var previousValue = generator.Next();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = generator.NextDistinct(previousValue);
+
+                Assert.NotEqual(previousValue, value);
+                Assert.False(generator.EqualityComparer.Equals(previousValue, value));
+
+                previousValue = value;
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(NextDistinct_SpecificValues_Data))]
+        public void NextDistinct_SpecificValues(ISet<ValidEnum> values) {
+            var generator = new EnumGenerator<ValidEnum>(values);
+            var previousValue = generator.Next();
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = generator.NextDistinct(previousValue);
+
+                Assert.NotEqual(previousValue, value);
+                Assert.False(generator.EqualityComparer.Equals(previousValue, value));
+
+                previousValue = value;
+            }
+        }
+
         public enum EmptyEnum {}
+
+        public enum OneEnum {
+
+            One = 1
+
+        }
 
         public enum ValidEnum {
 

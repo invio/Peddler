@@ -26,7 +26,11 @@
         "portable-net451+win8"
       ]
     },
-    "net462": {}
+    "net462": {
+      "dependencies": {
+        "System.Runtime": "4.1.0"
+      }
+    }
   }
 
 }

@@ -103,7 +103,7 @@ namespace Peddler {
 
             if (values.Count == 0) {
                 throw new ArgumentException(
-                    $"'nameof(values)' contains no enum values.",
+                    $"'{nameof(values)}' contains no enum values.",
                     nameof(values)
                 );
             }

@@ -1,12 +1,12 @@
 {
-  "version": "0.7.0",
+  "version": "0.8.0",
 
   "buildOptions": {
     "debugType": "portable",
   },
 
   "dependencies": {
-    "Peddler": { "version": "0.7.0", "target": "project" },
+    "Peddler": { "version": "0.8.0", "target": "project" },
     "dotnet-test-xunit": "2.2.0-*",
     "xunit": "2.2.0-*"
   },

@@ -28,7 +28,7 @@
   },
 
   "frameworks": {
-    "netstandard1.2": {}
+    "netstandard1.5": {}
   }
 
 }

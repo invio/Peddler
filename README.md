@@ -88,6 +88,7 @@ Peddler includes implementations for many of the basic data types of the .NET Fr
 | [DateTime](src/Peddler/DateTimeGenerator.cs) | X | X | X | Enforces consistent use of [`DateTimeKind`](https://msdn.microsoft.com/en-us/library/shx7s921.aspx) |
 | [String](src/Peddler/StringGenerator.cs) | X | X |   | Uses [`StringComparison.Ordinal`](https://msdn.microsoft.com/en-us/library/system.stringcomparison.aspx) rules |
 | [Enum<T>](src/Peddler/EnumGenerator.cs) | X | X |   |   |
+| [Boolean](src/Peddler/BooleanGenerator.cs) | X | X |   |   |
 
 ## Wrapper Implementations
 Peddler also includes implementations that wrap around base implementations in order to mutate their functionality. For example, a caller may want to periodically produce null, or convert value type `T` into `Nullable<T>`, without having to write a whole new generator. These implementations can wrap around the base implementation types to mutate their underlying behavior.

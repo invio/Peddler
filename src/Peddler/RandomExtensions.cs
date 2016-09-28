@@ -4,11 +4,32 @@ namespace Peddler {
 
     /// <summary>
     ///   A collection of extension methods for the <see cref="Random" /> class
-    ///   that provide the ability to generate any integral type in using APIs
+    ///   that provide the ability to generate any base data type while using APIs
     ///   that are identical to <see cref="Random.Next(int, int)" />,
     ///   <see cref="Random.Next(int)" />, and <see cref="Random.Next()" />.
     /// </summary>
-    public static class IntegralRandomExtensions {
+    public static class RandomExtensions {
+
+        /// <summary>
+        ///   Creates a random <see cref="Boolean" /> with a value that
+        ///   is either true or false.
+        /// </summary>
+        /// <param name="random">
+        ///   The <see cref="Random" /> instance being used via this extension method.
+        /// </param>
+        /// <returns>
+        ///   The <see cref="Boolean" /> that was randomly generated.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///   Thrown when <paramref name="random" /> is null.
+        /// </exception>
+        public static Boolean NextBoolean(this Random random) {
+            if (random == null) {
+                throw new ArgumentNullException(nameof(random));
+            }
+
+            return random.Next(0, 2) == 1;
+        }
 
         /// <summary>
         ///   Creates a random <see cref="SByte" /> with a value between

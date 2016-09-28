@@ -7,6 +7,8 @@ namespace Peddler {
 
         private const int numberOfAttempts = 1000;
 
+        // --- Boolean ---
+
         [Fact]
         public void NextBoolean_NullRandom() {
             Random random = null;

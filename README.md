@@ -91,7 +91,7 @@ Peddler includes implementations for many of the basic data types of the .NET Fr
 | [Boolean](src/Peddler/BooleanGenerator.cs) | X | X |   |   |
 
 ## Wrapper Implementations
-Peddler also includes implementations that wrap around base implementations in order to mutate their functionality. For example, a caller may want to periodically produce null, or convert value type `T` into `Nullable<T>`, without having to write a whole new generator. These implementations can wrap around the base implementation types to mutate their underlying behavior.
+Peddler also includes implementations that wrap around base implementations or collections in order to mutate their functionality. For example, a caller may want to periodically produce null, or convert value type `T` into `Nullable<T>`, without having to write a whole new generator. Perhaps the caller wants to generate values from a predefined set. These implementations wrap around a lower-level concept to to provide that type of functionality.
 
 | Type | `IGenerator<T>` | `IDistinctGenerator<T>` | `IComparableGenerator<T>` | Notes |
 | ---- |:---------------:|:-----------------------:|:-------------------------:| ----- |
@@ -101,6 +101,7 @@ Peddler also includes implementations that wrap around base implementations in o
 | [Nullable<T>](src/Peddler/NullableGenerator.cs) | X | | | Converts `<T>` to `Nullable<T>`
 | [NullableDistinct<T>](src/Peddler/NullableDistinctGenerator.cs) | X | X | | Converts `<T>` to `Nullable<T>`
 | [NullableComparable<T>](src/Peddler/NullableComparableGenerator.cs) | X | X | X | Converts `<T>` to `Nullable<T>`
+| [Set<T>](src/Peddler/SetGenerator.cs) | X | X | | Returns values from injected `ISet<T>`
 
 
 ## Constraints

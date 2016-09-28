@@ -10,8 +10,9 @@ namespace Peddler {
     public interface IDistinctGenerator<T> : IGenerator<T> {
 
         /// <summary>
-        ///   A comparer that reflects the comparison used to determine if two instances
-        ///   of <typeparamref name="T" /> are considered distinct for this generator.
+        ///   An <see cref="IEqualityComparer{T}" /> that contains the evaluation used
+        ///   to determine if two instances of <typeparamref name="T" /> are considered
+        ///   distinct from the perspective of this generator.
         /// </summary>
         IEqualityComparer<T> EqualityComparer { get; }
 

@@ -68,15 +68,46 @@ namespace Peddler {
             }
         }
 
+        [Fact]
+        public void AsciiAlphabetical_IsLetterInAlphabet() {
+             Assert.Equal(26 * 2, CharacterSets.AsciiAlphabetical.Count);
+
+            foreach (var character in CharacterSets.AsciiAlphabetical) {
+                Assert.True(
+                    Char.IsLetter(character),
+                    $"Unexpected character '\\u{character:x4}'."
+                );
+
+                if (Char.IsLower(character)) {
+                    Assert.True(
+                        'a' <= character && character <= 'z',
+                        $"Unexpected character '{character}'."
+                    );
+                } else {
+                    Assert.True(
+                        Char.IsUpper(character),
+                        $"Unexpected character '{character}'."
+                    );
+
+                    Assert.True(
+                        'A' <= character && character <= 'Z',
+                        $"Unexpected character '{character}'."
+                    );
+                }
+            }
+        }
+
         public static IEnumerable<object[]> CharacterSets_IsImmutable_Data {
             get {
                 yield return new [] { CharacterSets.AsciiControl };
                 yield return new [] { CharacterSets.AsciiPrintable };
                 yield return new [] { CharacterSets.AsciiExtended };
+                yield return new [] { CharacterSets.AsciiAlphabetical };
             }
         }
 
         [Theory]
+        [MemberData(nameof(CharacterSets_IsImmutable_Data))]
         public void CharacterSets_IsImmutable(ISet<Char> characters) {
             Assert.Throws<NotSupportedException>(
                 () => characters.Add('A')

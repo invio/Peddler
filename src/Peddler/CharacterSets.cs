@@ -26,6 +26,11 @@ namespace Peddler {
         /// </summary>
         public static ISet<Char> AsciiExtended { get; }
 
+        /// <summary>
+        ///   An immutable <see cref="ISet{Char}" /> of alphabetical ASCII characters.
+        /// </summary>
+        public static ISet<Char> AsciiAlphabetical { get; }
+
         static CharacterSets() {
             AsciiControl =
                 Enumerable
@@ -43,6 +48,13 @@ namespace Peddler {
             AsciiExtended =
                 Enumerable
                     .Range(128, 128)
+                    .Select(Convert.ToChar)
+                    .ToImmutableHashSet();
+
+            AsciiAlphabetical =
+                Enumerable
+                    .Range('a', 26)
+                    .Concat(Enumerable.Range('A', 26))
                     .Select(Convert.ToChar)
                     .ToImmutableHashSet();
         }

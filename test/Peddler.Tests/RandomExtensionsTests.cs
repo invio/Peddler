@@ -3,9 +3,54 @@ using Xunit;
 
 namespace Peddler {
 
-    public class IntegralRandomExtensionsTests {
+    public class RandomExtensionsTests {
 
         private const int numberOfAttempts = 1000;
+
+        // --- Boolean ---
+
+        [Fact]
+        public void NextBoolean_NullRandom() {
+            Random random = null;
+
+            Assert.Throws<ArgumentNullException>(
+                () => random.NextBoolean()
+            );
+        }
+
+        [Fact]
+        public void NextBoolean() {
+            var random = new Random();
+
+            bool hasTrue = false;
+            bool hasFalse = false;
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = random.NextBoolean();
+
+                if (value) {
+                    hasTrue = true;
+                } else {
+                    hasFalse = true;
+                }
+
+                if (hasTrue && hasFalse) {
+                    break;
+                }
+            }
+
+            Assert.True(
+                hasTrue,
+                $"Expected at least instance of 'true' to " +
+                $"be generated over {numberOfAttempts:N0} attempts."
+            );
+
+            Assert.True(
+                hasFalse,
+                $"Expected at least instance of 'false' to " +
+                $"be generated over {numberOfAttempts:N0} attempts."
+            );
+        }
 
         // --- NextSByte ---
 

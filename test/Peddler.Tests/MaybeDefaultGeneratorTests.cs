@@ -14,21 +14,27 @@ namespace Peddler {
         protected virtual MaybeDefaultGenerator<T> MaybeDefault<T>(
             IComparableGenerator<T> inner) {
 
-            return new MaybeDefaultGenerator<T>(inner);
+            var generator = new MaybeDefaultGenerator<T>(inner);
+            Assert.Equal(default(T), generator.DefaultValue);
+            return generator;
         }
 
         protected virtual MaybeDefaultGenerator<T> MaybeDefault<T>(
             IComparableGenerator<T> inner,
             T defaultValue) {
 
-            return new MaybeDefaultGenerator<T>(inner, defaultValue);
+            var generator = new MaybeDefaultGenerator<T>(inner, defaultValue);
+            Assert.Equal(defaultValue, generator.DefaultValue);
+            return generator;
         }
 
         protected virtual MaybeDefaultGenerator<T> MaybeDefault<T>(
             IComparableGenerator<T> inner,
             decimal percentage) {
 
-            return new MaybeDefaultGenerator<T>(inner, percentage);
+            var generator = new MaybeDefaultGenerator<T>(inner, percentage);
+            Assert.Equal(default(T), generator.DefaultValue);
+            return generator;
         }
 
         protected virtual MaybeDefaultGenerator<T> MaybeDefault<T>(
@@ -36,7 +42,9 @@ namespace Peddler {
             T defaultValue,
             decimal percentage) {
 
-            return new MaybeDefaultGenerator<T>(inner, defaultValue, percentage);
+            var generator = new MaybeDefaultGenerator<T>(inner, defaultValue, percentage);
+            Assert.Equal(defaultValue, generator.DefaultValue);
+            return generator;
         }
 
         public static IEnumerable<object[]> NonDefaultReturningGenerators {
@@ -138,14 +146,12 @@ namespace Peddler {
             T otherDefault) {
 
             var autoDefaultGenerator = this.MaybeDefault<T>(inner, 0m);
-            Assert.Equal(default(T), autoDefaultGenerator.DefaultValue);
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
                 Assert.NotEqual(default(T), autoDefaultGenerator.Next());
             }
 
             var specificDefaultGenerator = this.MaybeDefault<T>(inner, otherDefault, 0m);
-            Assert.Equal(otherDefault, specificDefaultGenerator.DefaultValue);
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
                 Assert.NotEqual(otherDefault, specificDefaultGenerator.Next());
@@ -167,14 +173,12 @@ namespace Peddler {
             T defaultValue) {
 
             var autoDefaultGenerator = this.MaybeDefault<T>(inner, 1m);
-            Assert.Equal(default(T), autoDefaultGenerator.DefaultValue);
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
                 Assert.Equal(default(T), autoDefaultGenerator.Next());
             }
 
             var specificDefaultGenerator = this.MaybeDefault<T>(inner, defaultValue, 1m);
-            Assert.Equal(defaultValue, specificDefaultGenerator.DefaultValue);
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
                 Assert.Equal(defaultValue, specificDefaultGenerator.Next());

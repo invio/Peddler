@@ -14,62 +14,130 @@ namespace Peddler {
 
         protected sealed override MaybeDefaultGenerator<T> MaybeDefault<T>(
             IComparableGenerator<T> inner,
+            T defaultValue) {
+
+            return this.MaybeDefaultDistinct<T>(inner, defaultValue);
+        }
+
+        protected sealed override MaybeDefaultGenerator<T> MaybeDefault<T>(
+            IComparableGenerator<T> inner,
             decimal percentage) {
 
             return this.MaybeDefaultDistinct<T>(inner, percentage);
         }
 
+        protected sealed override MaybeDefaultGenerator<T> MaybeDefault<T>(
+            IComparableGenerator<T> inner,
+            T defaultValue,
+            decimal percentage) {
+
+            return this.MaybeDefaultDistinct<T>(inner, defaultValue, percentage);
+        }
+
         protected virtual MaybeDefaultDistinctGenerator<T> MaybeDefaultDistinct<T>(
             IComparableGenerator<T> inner) {
 
-            return new MaybeDefaultDistinctGenerator<T>(inner);
+            var generator = new MaybeDefaultDistinctGenerator<T>(inner);
+            Assert.Equal(default(T), generator.DefaultValue);
+            return generator;
+        }
+
+        protected virtual MaybeDefaultDistinctGenerator<T> MaybeDefaultDistinct<T>(
+            IComparableGenerator<T> inner,
+            T defaultValue) {
+
+            var generator = new MaybeDefaultDistinctGenerator<T>(inner, defaultValue);
+            Assert.Equal(defaultValue, generator.DefaultValue);
+            return generator;
         }
 
         protected virtual MaybeDefaultDistinctGenerator<T> MaybeDefaultDistinct<T>(
             IComparableGenerator<T> inner,
             decimal percentage) {
 
-            return new MaybeDefaultDistinctGenerator<T>(inner, percentage);
+            var generator = new MaybeDefaultDistinctGenerator<T>(inner, percentage);
+            Assert.Equal(default(T), generator.DefaultValue);
+            return generator;
+        }
+
+        protected virtual MaybeDefaultDistinctGenerator<T> MaybeDefaultDistinct<T>(
+            IComparableGenerator<T> inner,
+            T defaultValue,
+            decimal percentage) {
+
+            var generator = new MaybeDefaultDistinctGenerator<T>(inner, defaultValue, percentage);
+            Assert.Equal(defaultValue, generator.DefaultValue);
+            return generator;
         }
 
         public static IEnumerable<object[]> FakeGenerators {
             get {
                 return new List<object[]> {
-                    new object[] { new FakeStructGenerator(new Int32Generator(-10, -1)) },
-                    new object[] { new FakeStructGenerator(new Int32Generator(-10, 10)) },
-                    new object[] { new FakeStructGenerator(new Int32Generator(1, 10)) },
-                    new object[] { new FakeStructGenerator(new Int32Generator(0, 2)) },
-                    new object[] { new FakeClassGenerator() }
+                    new object[] {
+                        new FakeStructGenerator(new Int32Generator(-10, -1)),
+                        new FakeStruct { Value = -200 }
+                    },
+                    new object[] {
+                        new FakeStructGenerator(new Int32Generator(-10, 10)),
+                        new FakeStruct { Value = -100 }
+                    },
+                    new object[] {
+                        new FakeStructGenerator(new Int32Generator(1, 10)),
+                        new FakeStruct { Value = -50 }
+                    },
+                    new object[] {
+                        new FakeStructGenerator(new Int32Generator(0, 2)),
+                        new FakeStruct { Value = -10 }
+                    },
+                    new object[] {
+                        new FakeClassGenerator(),
+                        new FakeClass(-100)
+                    }
                 };
             }
         }
 
         [Theory]
         [MemberData(nameof(FakeGenerators))]
-        public void NextDistinct_InnerCanGenerateNonDefault(Object inner) {
+        public void NextDistinct_InnerCanGenerateNonDefault(Object inner, Object defaultValue) {
             this.InvokeGenericMethod(
                 nameof(NextDistinct_InnerCanGenerateNonDefaultImpl),
-                inner
+                inner,
+                defaultValue
             );
         }
 
         public void NextDistinct_InnerCanGenerateNonDefaultImpl<T>(
-            IComparableGenerator<T> inner) {
+            IComparableGenerator<T> inner,
+            T defaultValue) {
 
-            var generator = this.MaybeDefaultDistinct<T>(inner);
+            var autoDefaultGenerator = this.MaybeDefaultDistinct<T>(inner);
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
-                var value = generator.NextDistinct(default(T));
+                var value = autoDefaultGenerator.NextDistinct(default(T));
 
                 Assert.NotEqual(default(T), value);
-                Assert.False(generator.EqualityComparer.Equals(default(T), value));
+                Assert.False(
+                    autoDefaultGenerator.EqualityComparer.Equals(default(T), value)
+                );
+            }
+
+            var specificDefaultGenerator = this.MaybeDefaultDistinct<T>(inner, defaultValue);
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                var value = specificDefaultGenerator.NextDistinct(default(T));
+
+                Assert.NotEqual(default(T), value);
+                Assert.False(
+                    specificDefaultGenerator.EqualityComparer.Equals(default(T), value)
+                );
             }
         }
 
         public static IEnumerable<object[]> DefaultReturningGenerators {
             get {
                 return new List<object[]> {
-                    new object[] { new DefaultGenerator<Object>() },
+                    new object[] { new DefaultGenerator<object>() },
                     new object[] { new DefaultGenerator<int>() },
                     new object[] { new DefaultGenerator<FakeClass>() },
                     new object[] { new DefaultGenerator<FakeStruct>() }
@@ -86,11 +154,13 @@ namespace Peddler {
             );
         }
 
-        public void NextDistinct_InnerOnlyReturnsDefaultImpl<T>(IComparableGenerator<T> inner) {
-            var generator = this.MaybeDefaultDistinct<T>(inner);
+        public void NextDistinct_InnerOnlyReturnsDefaultImpl<T>(
+            DefaultGenerator<T> inner) {
+
+            var generator = this.MaybeDefaultDistinct<T>(inner, inner.DefaultValue);
 
             Assert.Throws<UnableToGenerateValueException>(
-                () => generator.NextDistinct(default(T))
+                () => generator.NextDistinct(inner.DefaultValue)
             );
         }
 
@@ -106,7 +176,18 @@ namespace Peddler {
         [MemberData(nameof(IgnoredPercentages))]
         public void NextDistinct_InnerFailsButDefaultOk(decimal percentage) {
             var inner = new FakeStructGenerator(new Int32Generator(2, 3));
-            var generator = this.MaybeDefaultDistinct(inner, percentage);
+
+            NextDistinct_InnerFailsButDefaultOkImpl(
+                this.MaybeDefaultDistinct(inner, percentage)
+            );
+
+            NextDistinct_InnerFailsButDefaultOkImpl(
+                this.MaybeDefaultDistinct(inner, new FakeStruct { Value = -100 }, percentage)
+            );
+        }
+
+        private void NextDistinct_InnerFailsButDefaultOkImpl(
+            MaybeDefaultDistinctGenerator<FakeStruct> generator) {
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
 
@@ -115,26 +196,45 @@ namespace Peddler {
 
                 var value = generator.NextDistinct(new FakeStruct { Value = 2 });
 
-                Assert.Equal(default(FakeStruct), value);
-                Assert.True(generator.EqualityComparer.Equals(default(FakeStruct), value));
+                Assert.Equal(generator.DefaultValue, value);
+                Assert.True(generator.EqualityComparer.Equals(generator.DefaultValue, value));
             }
         }
 
         [Theory]
         [MemberData(nameof(FakeGenerators))]
-        public void NextDistinct_FiftyPercentageOfDefault(Object inner) {
+        public void NextDistinct_FiftyPercentageOfDefault(Object inner, Object defaultValue) {
             this.InvokeGenericMethod(
                 nameof(NextDistinct_FiftyPercentageOfDefaultImpl),
-                inner
+                inner,
+                defaultValue
             );
         }
 
         public void NextDistinct_FiftyPercentageOfDefaultImpl<T>(
-            IComparableGenerator<T> inner) {
+            IComparableGenerator<T> inner,
+            T defaultValue) {
 
             const decimal percentage = 0.5m;
 
-            var generator = this.MaybeDefaultDistinct<T>(inner, percentage);
+            NextDistinct_FiftyPercentageOfDefaultImpl(
+                this.MaybeDefaultDistinct<T>(inner, percentage),
+                inner.EqualityComparer,
+                percentage
+            );
+
+            NextDistinct_FiftyPercentageOfDefaultImpl(
+                this.MaybeDefaultDistinct<T>(inner, defaultValue, percentage),
+                inner.EqualityComparer,
+                percentage
+            );
+        }
+
+        private void NextDistinct_FiftyPercentageOfDefaultImpl<T>(
+            MaybeDefaultDistinctGenerator<T> generator,
+            IEqualityComparer<T> innerComparer,
+            decimal percentage) {
+
             var hasDefault = false;
             var hasNonDefault = false;
 
@@ -142,11 +242,11 @@ namespace Peddler {
                 var value = generator.NextDistinct(generator.Next());
 
                 if (!hasDefault) {
-                    hasDefault = inner.EqualityComparer.Equals(value, default(T));
+                    hasDefault = innerComparer.Equals(value, generator.DefaultValue);
                 }
 
                 if (!hasNonDefault) {
-                    hasNonDefault = !inner.EqualityComparer.Equals(value, default(T));
+                    hasNonDefault = !innerComparer.Equals(value, generator.DefaultValue);
                 }
 
                 if (hasDefault && hasNonDefault) {

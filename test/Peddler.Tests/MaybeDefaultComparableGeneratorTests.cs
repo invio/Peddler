@@ -41,13 +41,11 @@ namespace Peddler {
             );
         }
 
-        public void NextLessThan_InnerReturnsDefaultImpl<T>(
-            IComparableGenerator<T> inner) {
-
+        public void NextLessThan_InnerReturnsDefaultImpl<T>(DefaultGenerator<T> inner) {
             var generator = this.MaybeDefaultComparable<T>(inner);
 
             Assert.Throws<UnableToGenerateValueException>(
-                () => generator.NextLessThan(default(T))
+                () => generator.NextLessThan(inner.DefaultValue)
             );
         }
 
@@ -144,16 +142,16 @@ namespace Peddler {
         }
 
         public void NextLessThanOrEqualTo_InnerReturnsDefaultImpl<T>(
-            IComparableGenerator<T> inner) {
+            DefaultGenerator<T> inner) {
 
             var generator = this.MaybeDefaultComparable<T>(inner);
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
-                var value = generator.NextLessThanOrEqualTo(default(T));
+                var value = generator.NextLessThanOrEqualTo(inner.DefaultValue);
 
-                Assert.Equal(default(T), value);
-                Assert.True(generator.EqualityComparer.Equals(default(T), value));
-                Assert.Equal(0, generator.Comparer.Compare(default(T), value));
+                Assert.Equal(inner.DefaultValue, value);
+                Assert.True(generator.EqualityComparer.Equals(inner.DefaultValue, value));
+                Assert.Equal(0, generator.Comparer.Compare(inner.DefaultValue, value));
             }
         }
 
@@ -274,16 +272,16 @@ namespace Peddler {
         }
 
         public void NextGreaterThanOrEqualTo_InnerReturnsDefaultImpl<T>(
-            IComparableGenerator<T> inner) {
+            DefaultGenerator<T> inner) {
 
             var generator = this.MaybeDefaultComparable<T>(inner);
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
-                var value = generator.NextGreaterThanOrEqualTo(default(T));
+                var value = generator.NextGreaterThanOrEqualTo(inner.DefaultValue);
 
-                Assert.Equal(default(T), value);
-                Assert.True(generator.EqualityComparer.Equals(default(T), value));
-                Assert.Equal(0, generator.Comparer.Compare(default(T), value));
+                Assert.Equal(inner.DefaultValue, value);
+                Assert.True(generator.EqualityComparer.Equals(inner.DefaultValue, value));
+                Assert.Equal(0, generator.Comparer.Compare(inner.DefaultValue, value));
             }
         }
 
@@ -363,11 +361,11 @@ namespace Peddler {
             );
         }
 
-        public void NextGreaterThan_InnerReturnsDefaultImpl<T>(IComparableGenerator<T> inner) {
+        public void NextGreaterThan_InnerReturnsDefaultImpl<T>(DefaultGenerator<T> inner) {
             var generator = this.MaybeDefaultComparable<T>(inner);
 
             Assert.Throws<UnableToGenerateValueException>(
-                () => generator.NextGreaterThan(default(T))
+                () => generator.NextGreaterThan(inner.DefaultValue)
             );
         }
 

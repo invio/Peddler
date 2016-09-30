@@ -5,6 +5,15 @@ namespace Peddler {
 
     public class DefaultGenerator<T> : IComparableGenerator<T> {
 
+        public T DefaultValue { get; }
+
+        public DefaultGenerator() :
+            this(default(T)) {}
+
+        public DefaultGenerator(T defaultValue) {
+            this.DefaultValue = defaultValue;
+        }
+
         public IEqualityComparer<T> EqualityComparer {
             get { return EqualityComparer<T>.Default; }
         }
@@ -14,7 +23,7 @@ namespace Peddler {
         }
 
         public T Next() {
-            return default(T);
+            return this.DefaultValue;
         }
 
         public T NextDistinct(T other) {
@@ -38,8 +47,8 @@ namespace Peddler {
         }
 
         private T NextImpl(T other, Func<int, bool> isDefaultOk) {
-            if (isDefaultOk(this.Comparer.Compare(default(T), other))) {
-                return default(T);
+            if (isDefaultOk(this.Comparer.Compare(this.DefaultValue, other))) {
+                return this.DefaultValue;
             }
 
             throw new UnableToGenerateValueException();

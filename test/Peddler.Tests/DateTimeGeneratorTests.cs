@@ -111,9 +111,8 @@ namespace Peddler {
             var generator = new DateTimeGenerator();
 
             Assert.NotEqual(date.Kind, generator.Kind);
-            Assert.Throws<ArgumentException>(
-                () => generator.NextDistinct(date)
-            );
+
+            Assert.NotEqual(date, generator.NextDistinct(date));
         }
 
         [Fact]
@@ -162,31 +161,29 @@ namespace Peddler {
 
         [Fact]
         public void EqualityComparer_MismatchedKind() {
-            var date = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local);
+            var now = DateTime.Now;
             var generator = new DateTimeGenerator();
-
-            Assert.NotEqual(date.Kind, generator.Kind);
-
             var comparer = generator.EqualityComparer;
-            Assert.Throws<ArgumentException>(
-                () => generator.EqualityComparer.Equals(date, date)
-            );
 
-            Assert.Throws<ArgumentException>(
-                () => generator.EqualityComparer.GetHashCode(date)
+            Assert.False(
+                comparer.Equals(
+                    DateTime.SpecifyKind(now, DateTimeKind.Local),
+                    DateTime.SpecifyKind(now, DateTimeKind.Utc)
+                )
             );
         }
 
         [Fact]
         public void Comparer_MismatchedKind() {
-            var date = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local);
+            var now = DateTime.Now;
             var generator = new DateTimeGenerator();
+            var comparer = generator.Comparer;
 
-            Assert.NotEqual(date.Kind, generator.Kind);
-
-            var comparer = generator.EqualityComparer;
             Assert.Throws<ArgumentException>(
-                () => generator.Comparer.Compare(date, date)
+                () => comparer.Compare(
+                    DateTime.SpecifyKind(now, DateTimeKind.Local),
+                    DateTime.SpecifyKind(now, DateTimeKind.Utc)
+                )
             );
         }
 

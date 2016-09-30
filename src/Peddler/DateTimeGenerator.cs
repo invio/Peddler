@@ -42,22 +42,16 @@ namespace Peddler {
         ///   The comparison used to determine if two <see cref="DateTime" />
         ///   instances are equal in value.
         /// </summary>
-        /// <remarks>
-        ///   It does take into account the <see cref="DateTimeKind" />
-        ///   restriction the <see cref="DateTimeGenerator"/> enforces.
-        /// </remarks>
-        public IEqualityComparer<DateTime> EqualityComparer { get; }
+        public IEqualityComparer<DateTime> EqualityComparer { get; } =
+            new KindSensitiveDateTimeEqualityComparer();
 
         /// <summary>
         ///   The comparison used to determine if one <see cref="DateTime" />
         ///   instance is earlier than, the same time as, or later than another
         ///   <see cref="DateTime" /> instance.
         /// </summary>
-        /// <remarks>
-        ///   It does take into account the <see cref="DateTimeKind" />
-        ///   restriction the <see cref="DateTimeGenerator"/> enforces.
-        /// </remarks>
-        public IComparer<DateTime> Comparer { get; }
+        public IComparer<DateTime> Comparer { get; } =
+            new KindSensitiveDateTimeComparer();
 
         /// <summary>
         ///   Instantiates a <see cref="DateTimeGenerator" /> that can create
@@ -134,10 +128,6 @@ namespace Peddler {
             this.Kind = low.Kind;
             this.Low = new DateTime(this.tickGenerator.Low, this.Kind);
             this.High = new DateTime(this.tickGenerator.High, this.Kind);
-
-            var comparer = new KindSensitiveDateTimeComparer(this.Kind);
-            this.EqualityComparer = comparer;
-            this.Comparer = comparer;
         }
 
         private DateTime NextImpl(Func<Int64> getNextTicks) {
@@ -183,14 +173,13 @@ namespace Peddler {
         /// </summary>
         /// <remarks>
         ///   The value provided for <paramref name="other" /> does not, itself,
-        ///   need to be between <see cref="Low" /> and <see cref="High" />.
-        ///   It does, however, need to have a <see cref="DateTimeKind" /> that
-        ///   is consistent with the <see cref="Kind" /> property on this
-        ///   <see cref="DateTimeGenerator" />.
+        ///   need to be between <see cref="Low" /> and <see cref="High" />, nor
+        ///   of the same <see cref="DateTimeKind" />.
         /// </remarks>
         /// <param name="other">
-        ///   A <see cref="DateTime" /> that is distinct (in terms of ticks)
-        ///   from the <see cref="DateTime" /> that is returned.
+        ///   A <see cref="DateTime" /> that is distinct (in terms of ticks or
+        ///   <see cref="DateTimeKind" />) from the <see cref="DateTime" /> that
+        ///   is returned.
         /// </param>
         /// <returns>
         ///   A <see cref="DateTime" /> that is distinct (in terms of ticks) from
@@ -199,12 +188,6 @@ namespace Peddler {
         ///   The <see cref="DateTimeKind" /> on the <see cref="DateTime" />
         ///   returned will be equal to the <see cref="Kind" /> property.
         /// </returns>
-        /// <exception cref="ArgumentException">
-        ///   Thrown when the <see cref="Kind" /> defined on this
-        ///   <see cref="DateTimeGenerator" /> is different than the
-        ///   <see cref="DateTimeKind" /> specified on the <paramref name="other" />
-        ///   parameter.
-        /// </exception>
         /// <exception cref="UnableToGenerateValueException">
         ///   Thrown when this generator is unable to provide a value later than
         ///   or equal to <see cref="Low" /> and earlier than <see cref="High" />.
@@ -213,6 +196,10 @@ namespace Peddler {
         ///   provided via the <paramref name="other" /> parameter has that many ticks.
         /// </exception>
         public DateTime NextDistinct(DateTime other) {
+            if (other.Kind != this.Kind) {
+                return this.Next();
+            }
+
             return this.NextImpl(other, this.tickGenerator.NextDistinct);
         }
 

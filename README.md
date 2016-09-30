@@ -95,9 +95,9 @@ Peddler also includes implementations that wrap around base implementations or c
 
 | Type | `IGenerator<T>` | `IDistinctGenerator<T>` | `IComparableGenerator<T>` | Notes |
 | ---- |:---------------:|:-----------------------:|:-------------------------:| ----- |
-| [MaybeDefault<T>](src/Peddler/MaybeDefaultGenerator.cs) | X | | | Periodically returns `default(T)` based upon an injected percentage
-| [MaybeDefaultDistinct<T>](src/Peddler/MaybeDefaultDistinctGenerator.cs) | X | X | | Periodically returns `default(T)` based upon an injected percentage
-| [MaybeDefaultComparable<T>](src/Peddler/MaybeDefaultComparableGenerator.cs) | X | X | X | Periodically returns `default(T)` based upon an injected percentage
+| [MaybeDefault<T>](src/Peddler/MaybeDefaultGenerator.cs) | X | | | Returns predefined "default value" periodically
+| [MaybeDefaultDistinct<T>](src/Peddler/MaybeDefaultDistinctGenerator.cs) | X | X | | Returns predefined "default value" periodically
+| [MaybeDefaultComparable<T>](src/Peddler/MaybeDefaultComparableGenerator.cs) | X | X | X | Returns predefined "default value" periodically
 | [Nullable<T>](src/Peddler/NullableGenerator.cs) | X | | | Converts `<T>` to `Nullable<T>`
 | [NullableDistinct<T>](src/Peddler/NullableDistinctGenerator.cs) | X | X | | Converts `<T>` to `Nullable<T>`
 | [NullableComparable<T>](src/Peddler/NullableComparableGenerator.cs) | X | X | X | Converts `<T>` to `Nullable<T>`

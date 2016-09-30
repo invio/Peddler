@@ -6,30 +6,68 @@ namespace Peddler {
 
     public class MaybeDefaultComparableGeneratorTests : MaybeDefaultDistinctGeneratorTests {
 
-        protected sealed override IDistinctGenerator<T> MaybeDefaultDistinct<T>(
+        protected sealed override MaybeDefaultDistinctGenerator<T> MaybeDefaultDistinct<T>(
             IComparableGenerator<T> inner) {
 
             return this.MaybeDefaultComparable<T>(inner);
         }
 
-        protected sealed override IDistinctGenerator<T> MaybeDefaultDistinct<T>(
+        protected sealed override MaybeDefaultDistinctGenerator<T> MaybeDefaultDistinct<T>(
+            IComparableGenerator<T> inner,
+            T defaultValue) {
+
+            return this.MaybeDefaultComparable<T>(inner, defaultValue);
+        }
+
+        protected sealed override MaybeDefaultDistinctGenerator<T> MaybeDefaultDistinct<T>(
             IComparableGenerator<T> inner,
             decimal percentage) {
 
             return this.MaybeDefaultComparable<T>(inner, percentage);
         }
 
-        protected virtual IComparableGenerator<T> MaybeDefaultComparable<T>(
-            IComparableGenerator<T> inner) {
+        protected sealed override MaybeDefaultDistinctGenerator<T> MaybeDefaultDistinct<T>(
+            IComparableGenerator<T> inner,
+            T defaultValue,
+            decimal percentage) {
 
-            return new MaybeDefaultComparableGenerator<T>(inner);
+            return this.MaybeDefaultComparable<T>(inner, defaultValue, percentage);
         }
 
-        protected virtual IComparableGenerator<T> MaybeDefaultComparable<T>(
+        protected virtual MaybeDefaultComparableGenerator<T> MaybeDefaultComparable<T>(
+            IComparableGenerator<T> inner) {
+
+            var generator = new MaybeDefaultComparableGenerator<T>(inner);
+            Assert.Equal(default(T), generator.DefaultValue);
+            return generator;
+        }
+
+        protected virtual MaybeDefaultComparableGenerator<T> MaybeDefaultComparable<T>(
+            IComparableGenerator<T> inner,
+            T defaultValue) {
+
+            var generator = new MaybeDefaultComparableGenerator<T>(inner, defaultValue);
+            Assert.Equal(defaultValue, generator.DefaultValue);
+            return generator;
+        }
+
+        protected virtual MaybeDefaultComparableGenerator<T> MaybeDefaultComparable<T>(
             IComparableGenerator<T> inner,
             decimal percentage) {
 
-            return new MaybeDefaultComparableGenerator<T>(inner, percentage);
+            var generator = new MaybeDefaultComparableGenerator<T>(inner, percentage);
+            Assert.Equal(default(T), generator.DefaultValue);
+            return generator;
+        }
+
+        protected virtual MaybeDefaultComparableGenerator<T> MaybeDefaultComparable<T>(
+            IComparableGenerator<T> inner,
+            T defaultValue,
+            decimal percentage) {
+
+            var generator = new MaybeDefaultComparableGenerator<T>(inner, defaultValue, percentage);
+            Assert.Equal(defaultValue, generator.DefaultValue);
+            return generator;
         }
 
         [Theory]
@@ -41,13 +79,11 @@ namespace Peddler {
             );
         }
 
-        public void NextLessThan_InnerReturnsDefaultImpl<T>(
-            IComparableGenerator<T> inner) {
-
-            var generator = this.MaybeDefaultComparable<T>(inner);
+        public void NextLessThan_InnerReturnsDefaultImpl<T>(DefaultGenerator<T> inner) {
+            var generator = this.MaybeDefaultComparable<T>(inner, inner.DefaultValue);
 
             Assert.Throws<UnableToGenerateValueException>(
-                () => generator.NextLessThan(default(T))
+                () => generator.NextLessThan(inner.DefaultValue)
             );
         }
 
@@ -55,7 +91,25 @@ namespace Peddler {
         [MemberData(nameof(IgnoredPercentages))]
         public void NextLessThan_InnerFailsButDefaultOk_Struct(decimal percentage) {
             var inner = new FakeStructGenerator(new Int32Generator(5, 10));
-            var generator = this.MaybeDefaultComparable(inner, percentage);
+
+            this.NextLessThan_InnerFailsButDefaultOk_StructImpl(
+                this.MaybeDefaultComparable(
+                    inner,
+                    percentage
+                )
+            );
+
+            this.NextLessThan_InnerFailsButDefaultOk_StructImpl(
+                this.MaybeDefaultComparable(
+                    inner,
+                    new FakeStruct { Value = -100 },
+                    percentage
+                )
+            );
+        }
+
+        private void NextLessThan_InnerFailsButDefaultOk_StructImpl(
+            MaybeDefaultComparableGenerator<FakeStruct> generator) {
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
 
@@ -64,9 +118,9 @@ namespace Peddler {
 
                 var value = generator.NextLessThan(new FakeStruct { Value = 2 });
 
-                Assert.Equal(default(FakeStruct), value);
-                Assert.True(generator.EqualityComparer.Equals(default(FakeStruct), value));
-                Assert.Equal(0, generator.Comparer.Compare(default(FakeStruct), value));
+                Assert.Equal(generator.DefaultValue, value);
+                Assert.True(generator.EqualityComparer.Equals(generator.DefaultValue, value));
+                Assert.Equal(0, generator.Comparer.Compare(generator.DefaultValue, value));
             }
         }
 
@@ -74,7 +128,25 @@ namespace Peddler {
         [MemberData(nameof(IgnoredPercentages))]
         public void NextLessThan_InnerFailsButDefaultOk_Class(decimal percentage) {
             var inner = new FakeClassGenerator(new Int32Generator(5, 10));
-            var generator = this.MaybeDefaultComparable(inner, percentage);
+
+            this.NextLessThan_InnerFailsButDefaultOk_ClassImpl(
+                this.MaybeDefaultComparable(
+                    inner,
+                    percentage
+                )
+            );
+
+            this.NextLessThan_InnerFailsButDefaultOk_ClassImpl(
+                this.MaybeDefaultComparable(
+                    inner,
+                    new FakeClass(-100),
+                    percentage
+                )
+            );
+        }
+
+        private void NextLessThan_InnerFailsButDefaultOk_ClassImpl(
+            MaybeDefaultComparableGenerator<FakeClass> generator) {
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
 
@@ -84,9 +156,9 @@ namespace Peddler {
 
                 var value = generator.NextLessThan(new FakeClass(2));
 
-                Assert.Equal(default(FakeClass), value);
-                Assert.True(generator.EqualityComparer.Equals(default(FakeClass), value));
-                Assert.Equal(0, generator.Comparer.Compare(default(FakeClass), value));
+                Assert.Equal(generator.DefaultValue, value);
+                Assert.True(generator.EqualityComparer.Equals(generator.DefaultValue, value));
+                Assert.Equal(0, generator.Comparer.Compare(generator.DefaultValue, value));
             }
         }
 
@@ -144,16 +216,16 @@ namespace Peddler {
         }
 
         public void NextLessThanOrEqualTo_InnerReturnsDefaultImpl<T>(
-            IComparableGenerator<T> inner) {
+            DefaultGenerator<T> inner) {
 
-            var generator = this.MaybeDefaultComparable<T>(inner);
+            var generator = this.MaybeDefaultComparable<T>(inner, inner.DefaultValue);
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
-                var value = generator.NextLessThanOrEqualTo(default(T));
+                var value = generator.NextLessThanOrEqualTo(inner.DefaultValue);
 
-                Assert.Equal(default(T), value);
-                Assert.True(generator.EqualityComparer.Equals(default(T), value));
-                Assert.Equal(0, generator.Comparer.Compare(default(T), value));
+                Assert.Equal(inner.DefaultValue, value);
+                Assert.True(generator.EqualityComparer.Equals(inner.DefaultValue, value));
+                Assert.Equal(0, generator.Comparer.Compare(inner.DefaultValue, value));
             }
         }
 
@@ -161,7 +233,25 @@ namespace Peddler {
         [MemberData(nameof(IgnoredPercentages))]
         public void NextLessThanOrEqualTo_InnerFailsButDefaultOk_Struct(decimal percentage) {
             var inner = new FakeStructGenerator(new Int32Generator(5, 10));
-            var generator = this.MaybeDefaultComparable(inner, percentage);
+
+            this.NextLessThanOrEqualTo_InnerFailsButDefaultOk_StructImpl(
+                this.MaybeDefaultComparable(
+                    inner,
+                    percentage
+                )
+            );
+
+            this.NextLessThanOrEqualTo_InnerFailsButDefaultOk_StructImpl(
+                this.MaybeDefaultComparable(
+                    inner,
+                    new FakeStruct { Value = -100 },
+                    percentage
+                )
+            );
+        }
+
+        private void NextLessThanOrEqualTo_InnerFailsButDefaultOk_StructImpl(
+            MaybeDefaultComparableGenerator<FakeStruct> generator) {
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
 
@@ -170,17 +260,17 @@ namespace Peddler {
 
                 var value = generator.NextLessThanOrEqualTo(new FakeStruct { Value = 2 });
 
-                Assert.Equal(default(FakeStruct), value);
-                Assert.True(generator.EqualityComparer.Equals(default(FakeStruct), value));
-                Assert.Equal(0, generator.Comparer.Compare(default(FakeStruct), value));
+                Assert.Equal(generator.DefaultValue, value);
+                Assert.True(generator.EqualityComparer.Equals(generator.DefaultValue, value));
+                Assert.Equal(0, generator.Comparer.Compare(generator.DefaultValue, value));
 
                 // the default is consider equal to itself, so should return default(T)
 
-                value = generator.NextLessThanOrEqualTo(default(FakeStruct));
+                value = generator.NextLessThanOrEqualTo(generator.DefaultValue);
 
-                Assert.Equal(default(FakeStruct), value);
-                Assert.True(generator.EqualityComparer.Equals(default(FakeStruct), value));
-                Assert.Equal(0, generator.Comparer.Compare(default(FakeStruct), value));
+                Assert.Equal(generator.DefaultValue, value);
+                Assert.True(generator.EqualityComparer.Equals(generator.DefaultValue, value));
+                Assert.Equal(0, generator.Comparer.Compare(generator.DefaultValue, value));
             }
         }
 
@@ -188,7 +278,25 @@ namespace Peddler {
         [MemberData(nameof(IgnoredPercentages))]
         public void NextLessThanOrEqualTo_InnerFailsButDefaultOk_Class(decimal percentage) {
             var inner = new FakeClassGenerator(new Int32Generator(5, 10));
-            var generator = this.MaybeDefaultComparable(inner, percentage);
+
+            this.NextLessThanOrEqualTo_InnerFailsButDefaultOk_ClassImpl(
+                this.MaybeDefaultComparable(
+                    inner,
+                    percentage
+                )
+            );
+
+            this.NextLessThanOrEqualTo_InnerFailsButDefaultOk_ClassImpl(
+                this.MaybeDefaultComparable(
+                    inner,
+                    new FakeClass(-100),
+                    percentage
+                )
+            );
+        }
+
+        public void NextLessThanOrEqualTo_InnerFailsButDefaultOk_ClassImpl(
+            MaybeDefaultComparableGenerator<FakeClass> generator) {
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
 
@@ -198,17 +306,17 @@ namespace Peddler {
 
                 var value = generator.NextLessThanOrEqualTo(new FakeClass(2));
 
-                Assert.Equal(default(FakeClass), value);
-                Assert.True(generator.EqualityComparer.Equals(default(FakeClass), value));
-                Assert.Equal(0, generator.Comparer.Compare(default(FakeClass), value));
+                Assert.Equal(generator.DefaultValue, value);
+                Assert.True(generator.EqualityComparer.Equals(generator.DefaultValue, value));
+                Assert.Equal(0, generator.Comparer.Compare(generator.DefaultValue, value));
 
                 // the default is consider equal to itself, so should return default(T)
 
-                value = generator.NextLessThanOrEqualTo(default(FakeClass));
+                value = generator.NextLessThanOrEqualTo(generator.DefaultValue);
 
-                Assert.Equal(default(FakeClass), value);
-                Assert.True(generator.EqualityComparer.Equals(default(FakeClass), value));
-                Assert.Equal(0, generator.Comparer.Compare(default(FakeClass), value));
+                Assert.Equal(generator.DefaultValue, value);
+                Assert.True(generator.EqualityComparer.Equals(generator.DefaultValue, value));
+                Assert.Equal(0, generator.Comparer.Compare(generator.DefaultValue, value));
             }
         }
 
@@ -274,16 +382,16 @@ namespace Peddler {
         }
 
         public void NextGreaterThanOrEqualTo_InnerReturnsDefaultImpl<T>(
-            IComparableGenerator<T> inner) {
+            DefaultGenerator<T> inner) {
 
-            var generator = this.MaybeDefaultComparable<T>(inner);
+            var generator = this.MaybeDefaultComparable<T>(inner, inner.DefaultValue);
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
-                var value = generator.NextGreaterThanOrEqualTo(default(T));
+                var value = generator.NextGreaterThanOrEqualTo(inner.DefaultValue);
 
-                Assert.Equal(default(T), value);
-                Assert.True(generator.EqualityComparer.Equals(default(T), value));
-                Assert.Equal(0, generator.Comparer.Compare(default(T), value));
+                Assert.Equal(inner.DefaultValue, value);
+                Assert.True(generator.EqualityComparer.Equals(inner.DefaultValue, value));
+                Assert.Equal(0, generator.Comparer.Compare(inner.DefaultValue, value));
             }
         }
 
@@ -291,7 +399,25 @@ namespace Peddler {
         [MemberData(nameof(IgnoredPercentages))]
         public void NextGreaterThanOrEqualTo_InnerFailsButDefaultOk(decimal percentage) {
             var inner = new FakeStructGenerator(new Int32Generator(-10, -5));
-            var generator = this.MaybeDefaultComparable(inner, percentage);
+
+            this.NextGreaterThanOrEqualTo_InnerFailsButDefaultOkImpl(
+                this.MaybeDefaultComparable(
+                    inner,
+                    percentage
+                )
+            );
+
+            this.NextGreaterThanOrEqualTo_InnerFailsButDefaultOkImpl(
+                this.MaybeDefaultComparable(
+                    inner,
+                    new FakeStruct { Value = 100 },
+                    percentage
+                )
+            );
+        }
+
+        public void NextGreaterThanOrEqualTo_InnerFailsButDefaultOkImpl(
+            MaybeDefaultComparableGenerator<FakeStruct> generator) {
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
 
@@ -300,17 +426,17 @@ namespace Peddler {
 
                 var value = generator.NextGreaterThanOrEqualTo(new FakeStruct { Value = -2 });
 
-                Assert.Equal(default(FakeStruct), value);
-                Assert.True(generator.EqualityComparer.Equals(default(FakeStruct), value));
-                Assert.Equal(0, generator.Comparer.Compare(default(FakeStruct), value));
+                Assert.Equal(generator.DefaultValue, value);
+                Assert.True(generator.EqualityComparer.Equals(generator.DefaultValue, value));
+                Assert.Equal(0, generator.Comparer.Compare(generator.DefaultValue, value));
 
                 // the default is consider equal to itself, so should return default(T)
 
-                value = generator.NextGreaterThanOrEqualTo(default(FakeStruct));
+                value = generator.NextGreaterThanOrEqualTo(generator.DefaultValue);
 
-                Assert.Equal(default(FakeStruct), value);
-                Assert.True(generator.EqualityComparer.Equals(default(FakeStruct), value));
-                Assert.Equal(0, generator.Comparer.Compare(default(FakeStruct), value));
+                Assert.Equal(generator.DefaultValue, value);
+                Assert.True(generator.EqualityComparer.Equals(generator.DefaultValue, value));
+                Assert.Equal(0, generator.Comparer.Compare(generator.DefaultValue, value));
             }
         }
 
@@ -363,11 +489,11 @@ namespace Peddler {
             );
         }
 
-        public void NextGreaterThan_InnerReturnsDefaultImpl<T>(IComparableGenerator<T> inner) {
-            var generator = this.MaybeDefaultComparable<T>(inner);
+        public void NextGreaterThan_InnerReturnsDefaultImpl<T>(DefaultGenerator<T> inner) {
+            var generator = this.MaybeDefaultComparable<T>(inner, inner.DefaultValue);
 
             Assert.Throws<UnableToGenerateValueException>(
-                () => generator.NextGreaterThan(default(T))
+                () => generator.NextGreaterThan(inner.DefaultValue)
             );
         }
 
@@ -377,6 +503,25 @@ namespace Peddler {
             var inner = new FakeStructGenerator(new Int32Generator(-10, -5));
             var generator = this.MaybeDefaultComparable(inner, percentage);
 
+            this.NextGreaterThan_InnerFailsButDefaultOkImpl(
+                this.MaybeDefaultComparable(
+                    inner,
+                    percentage
+                )
+            );
+
+            this.NextGreaterThan_InnerFailsButDefaultOkImpl(
+                this.MaybeDefaultComparable(
+                    inner,
+                    new FakeStruct { Value = 5 },
+                    percentage
+                )
+            );
+        }
+
+        private void NextGreaterThan_InnerFailsButDefaultOkImpl(
+            MaybeDefaultComparableGenerator<FakeStruct> generator) {
+
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
 
                 // -5 is less than the range of FakeStructGenerator,
@@ -384,9 +529,9 @@ namespace Peddler {
 
                 var value = generator.NextGreaterThan(new FakeStruct { Value = -2 });
 
-                Assert.Equal(default(FakeStruct), value);
-                Assert.True(generator.EqualityComparer.Equals(default(FakeStruct), value));
-                Assert.Equal(0, generator.Comparer.Compare(default(FakeStruct), value));
+                Assert.Equal(generator.DefaultValue, value);
+                Assert.True(generator.EqualityComparer.Equals(generator.DefaultValue, value));
+                Assert.Equal(0, generator.Comparer.Compare(generator.DefaultValue, value));
             }
         }
 
@@ -443,11 +588,11 @@ namespace Peddler {
                 var value = nextImpl(otherValue);
 
                 if (!hasDefault) {
-                    hasDefault = inner.EqualityComparer.Equals(value, default(T));
+                    hasDefault = inner.EqualityComparer.Equals(value, generator.DefaultValue);
                 }
 
                 if (!hasNonDefault) {
-                    hasNonDefault = !inner.EqualityComparer.Equals(value, default(T));
+                    hasNonDefault = !inner.EqualityComparer.Equals(value, generator.DefaultValue);
                 }
 
                 if (hasDefault && hasNonDefault) {
@@ -468,7 +613,6 @@ namespace Peddler {
                 $"percentage chance of generating default values, the generator did not " +
                 $"generate a non-default value. The randomization approach is unbalanced."
             );
-
         }
 
     }

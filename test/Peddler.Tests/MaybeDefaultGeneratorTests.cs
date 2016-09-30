@@ -11,23 +11,57 @@ namespace Peddler {
         protected const int numberOfAttempts = 100;
         protected const int extendedNumberOfAttempts = 10 * numberOfAttempts;
 
-        protected virtual IGenerator<T> MaybeDefault<T>(IComparableGenerator<T> inner) {
-            return new MaybeDefaultGenerator<T>(inner);
+        protected virtual MaybeDefaultGenerator<T> MaybeDefault<T>(
+            IComparableGenerator<T> inner) {
+
+            var generator = new MaybeDefaultGenerator<T>(inner);
+            Assert.Equal(default(T), generator.DefaultValue);
+            return generator;
         }
 
-        protected virtual IGenerator<T> MaybeDefault<T>(
+        protected virtual MaybeDefaultGenerator<T> MaybeDefault<T>(
+            IComparableGenerator<T> inner,
+            T defaultValue) {
+
+            var generator = new MaybeDefaultGenerator<T>(inner, defaultValue);
+            Assert.Equal(defaultValue, generator.DefaultValue);
+            return generator;
+        }
+
+        protected virtual MaybeDefaultGenerator<T> MaybeDefault<T>(
             IComparableGenerator<T> inner,
             decimal percentage) {
 
-            return new MaybeDefaultGenerator<T>(inner, percentage);
+            var generator = new MaybeDefaultGenerator<T>(inner, percentage);
+            Assert.Equal(default(T), generator.DefaultValue);
+            return generator;
+        }
+
+        protected virtual MaybeDefaultGenerator<T> MaybeDefault<T>(
+            IComparableGenerator<T> inner,
+            T defaultValue,
+            decimal percentage) {
+
+            var generator = new MaybeDefaultGenerator<T>(inner, defaultValue, percentage);
+            Assert.Equal(defaultValue, generator.DefaultValue);
+            return generator;
         }
 
         public static IEnumerable<object[]> NonDefaultReturningGenerators {
             get {
                 return new List<object[]> {
-                    new object[] { new FakeClassGenerator() },
-                    new object[] { new FakeStructGenerator(new Int32Generator(1, 10)) },
-                    new object[] { new FakeStructGenerator(new Int32Generator(-10, -1)) }
+                    new object[] {
+                        new FakeClassGenerator(new Int32Generator(-10, 10)),
+                        new FakeClass(-100)
+                    },
+                    new object[] {
+                        new FakeStructGenerator(new Int32Generator(1, 10)),
+                        new FakeStruct { Value = -100 }
+                    },
+                    new object[] {
+                        new FakeStructGenerator(new Int32Generator(-10, -1)),
+                        new FakeStruct { Value = -100 }
+                    }
                 };
             }
         }
@@ -41,7 +75,15 @@ namespace Peddler {
             );
 
             Assert.Throws<ArgumentNullException>(
+                () => this.MaybeDefault(inner, default(Object))
+            );
+
+            Assert.Throws<ArgumentNullException>(
                 () => this.MaybeDefault(inner, 0.5m)
+            );
+
+            Assert.Throws<ArgumentNullException>(
+                () => this.MaybeDefault(inner, default(Object), 0.5m)
             );
         }
 
@@ -61,6 +103,10 @@ namespace Peddler {
             Assert.Throws<ArgumentOutOfRangeException>(
                 () => this.MaybeDefault(inner, percentage)
             );
+
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => this.MaybeDefault(inner, new FakeClass(-100), percentage)
+            );
         }
 
         public static IEnumerable<object[]> Constructor_PercentageAboveOne_Data {
@@ -71,6 +117,37 @@ namespace Peddler {
             }
         }
 
+        [Fact]
+        public void Constructor_WithoutDefault_DefaultValueIsDefaultForType() {
+            var inner = new Int32Generator();
+
+            Assert.Equal(
+                default(Int32),
+                this.MaybeDefault(inner).DefaultValue
+            );
+
+            Assert.Equal(
+                default(Int32),
+                this.MaybeDefault(inner, 0.5m).DefaultValue
+            );
+        }
+
+        [Fact]
+        public void Constructor_WithDefault_DefaultValueRespectsInjectedValue() {
+            var inner = new Int32Generator();
+            var defaultValue = inner.Next();
+
+            Assert.Equal(
+                defaultValue,
+                this.MaybeDefault(inner, defaultValue).DefaultValue
+            );
+
+            Assert.Equal(
+                defaultValue,
+                this.MaybeDefault(inner, defaultValue, 0.5m).DefaultValue
+            );
+        }
+
         [Theory]
         [MemberData(nameof(Constructor_PercentageAboveOne_Data))]
         public void Constructor_PercentageAboveOne(decimal percentage) {
@@ -79,46 +156,100 @@ namespace Peddler {
             Assert.Throws<ArgumentOutOfRangeException>(
                 () => this.MaybeDefault(inner, percentage)
             );
+
+            Assert.Throws<ArgumentOutOfRangeException>(
+                () => this.MaybeDefault(inner, new FakeClass(-100), percentage)
+            );
         }
 
         [Theory]
         [MemberData(nameof(NonDefaultReturningGenerators))]
-        public void Next_ZeroPercentageOfDefault(Object inner) {
-            this.InvokeGenericMethod(nameof(Next_ZeroPercentageOfDefaultImpl), inner);
+        public void Next_ZeroPercentageOfDefault(Object inner, Object defaultValue) {
+            this.InvokeGenericMethod(
+                nameof(Next_ZeroPercentageOfDefaultImpl),
+                inner,
+                defaultValue
+            );
         }
 
-        public void Next_ZeroPercentageOfDefaultImpl<T>(IComparableGenerator<T> inner) {
-            var generator = this.MaybeDefault<T>(inner, 0m);
+        public void Next_ZeroPercentageOfDefaultImpl<T>(
+            IComparableGenerator<T> inner,
+            T otherDefault) {
+
+            var autoDefaultGenerator = this.MaybeDefault<T>(inner, 0m);
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
-                Assert.NotEqual(default(T), generator.Next());
+                Assert.NotEqual(default(T), autoDefaultGenerator.Next());
+            }
+
+            var specificDefaultGenerator = this.MaybeDefault<T>(inner, otherDefault, 0m);
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                Assert.NotEqual(otherDefault, specificDefaultGenerator.Next());
             }
         }
 
         [Theory]
         [MemberData(nameof(NonDefaultReturningGenerators))]
-        public void Next_OneHundredPercentageOfDefault(Object inner) {
-            this.InvokeGenericMethod(nameof(Next_OneHundredPercentageOfDefaultImpl), inner);
+        public void Next_OneHundredPercentageOfDefault(Object inner, Object defaultValue) {
+            this.InvokeGenericMethod(
+                nameof(Next_OneHundredPercentageOfDefaultImpl),
+                inner,
+                defaultValue
+            );
         }
 
-        public void Next_OneHundredPercentageOfDefaultImpl<T>(FakeGeneratorBase<T> inner) {
-            var generator = this.MaybeDefault<T>(inner, 1m);
+        public void Next_OneHundredPercentageOfDefaultImpl<T>(
+            IComparableGenerator<T> inner,
+            T defaultValue) {
+
+            var autoDefaultGenerator = this.MaybeDefault<T>(inner, 1m);
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
-                Assert.Equal(default(T), generator.Next());
+                Assert.Equal(default(T), autoDefaultGenerator.Next());
+            }
+
+            var specificDefaultGenerator = this.MaybeDefault<T>(inner, defaultValue, 1m);
+
+            for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
+                Assert.Equal(defaultValue, specificDefaultGenerator.Next());
             }
         }
 
         [Theory]
         [MemberData(nameof(NonDefaultReturningGenerators))]
-        public void Next_FiftyPercentageOfDefault(Object inner) {
-            this.InvokeGenericMethod(nameof(Next_FiftyPercentageOfDefaultImpl), inner);
+        public void Next_FiftyPercentageOfDefault(Object inner, Object defaultValue) {
+            this.InvokeGenericMethod(
+                nameof(Next_FiftyPercentageOfDefaultImpl),
+                inner,
+                defaultValue
+            );
         }
 
-        public void Next_FiftyPercentageOfDefaultImpl<T>(IComparableGenerator<T> inner) {
+        public void Next_FiftyPercentageOfDefaultImpl<T>(
+            IComparableGenerator<T> inner,
+            T defaultValue) {
+
             const decimal percentage = 0.5m;
 
-            var generator = this.MaybeDefault<T>(inner, percentage);
+            Next_FiftyPercentageOfDefaultImpl(
+                this.MaybeDefault<T>(inner, percentage),
+                inner.EqualityComparer,
+                percentage
+            );
+
+            Next_FiftyPercentageOfDefaultImpl(
+                this.MaybeDefault<T>(inner, defaultValue, percentage),
+                inner.EqualityComparer,
+                percentage
+            );
+        }
+
+        private void Next_FiftyPercentageOfDefaultImpl<T>(
+            MaybeDefaultGenerator<T> generator,
+            IEqualityComparer<T> innerComparer,
+            decimal percentage) {
+
             var hasDefault = false;
             var hasNonDefault = false;
 
@@ -126,11 +257,11 @@ namespace Peddler {
                 var value = generator.Next();
 
                 if (!hasDefault) {
-                    hasDefault = inner.EqualityComparer.Equals(value, default(T));
+                    hasDefault = innerComparer.Equals(value, generator.DefaultValue);
                 }
 
                 if (!hasNonDefault) {
-                    hasNonDefault = !inner.EqualityComparer.Equals(value, default(T));
+                    hasNonDefault = !innerComparer.Equals(value, generator.DefaultValue);
                 }
 
                 if (hasDefault && hasNonDefault) {
@@ -139,11 +270,17 @@ namespace Peddler {
             }
 
             Assert.True(
-                hasDefault && hasNonDefault,
+                hasDefault,
                 $"After {extendedNumberOfAttempts:N0} attempts with a {percentage * 100}% " +
                 $"percentage chance of generating default values, the generator did not " +
-                $"generate both a default and non-default value. The randomization approach " +
-                $"is unbalanced."
+                $"generate a default value. The randomization approach is unbalanced."
+            );
+
+            Assert.True(
+                hasNonDefault,
+                $"After {extendedNumberOfAttempts:N0} attempts with a {percentage * 100}% " +
+                $"percentage chance of generating default values, the generator did not " +
+                $"generate a non-default value. The randomization approach is unbalanced."
             );
         }
 

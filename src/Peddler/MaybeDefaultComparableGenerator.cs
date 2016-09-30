@@ -229,19 +229,19 @@ namespace Peddler {
         }
 
         private T NextByComparison(T other, Func<int, bool> isDefaultPossible, Func<T, T> next) {
-            var comparison = this.inner.Comparer.Compare(default(T), other);
+            var comparison = this.inner.Comparer.Compare(this.DefaultValue, other);
 
             if (!isDefaultPossible(comparison)) {
                 return next(other);
             }
 
             if (this.MaybeDefault()) {
-                return default(T);
+                return this.DefaultValue;
             }
 
             try {
 
-                // We have already established that 'default(T)' is a valid value
+                // We have already established that 'this.DefaultValue' is a valid value
                 // to return in this circumstance, so we will return it even though
                 // we didn't happen to pick it randomly this time.
 
@@ -250,7 +250,7 @@ namespace Peddler {
 
                 return next(other);
             } catch (UnableToGenerateValueException) {
-                return default(T);
+                return this.DefaultValue;
             }
         }
 

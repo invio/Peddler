@@ -112,24 +112,24 @@ namespace Peddler {
         ///   generate a value that is distinct from <paramref name="other" />.
         /// </exception>
         public T NextDistinct(T other) {
-            if (this.inner.EqualityComparer.Equals(other, default(T))) {
+            if (this.inner.EqualityComparer.Equals(other, this.DefaultValue)) {
                 return this.inner.NextDistinct(other);
             }
 
             if (this.MaybeDefault()) {
-                return default(T);
+                return this.DefaultValue;
             }
 
             try {
 
                 // If the inner IDistinctGenerator<T> is unable to
                 // generate a distinct value, but the value of "other"
-                // is not default(T), we can still fulfill the contract
-                // of the interface if by returning default(T).
+                // is not this.DefaultValue, we can still fulfill the contract
+                // of the interface if by returning this.DefaultValue.
 
                 return this.inner.NextDistinct(other);
             } catch (UnableToGenerateValueException) {
-                return default(T);
+                return this.DefaultValue;
             }
         }
 

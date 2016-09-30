@@ -6,26 +6,26 @@ namespace Peddler {
 
     public class MaybeDefaultComparableGeneratorTests : MaybeDefaultDistinctGeneratorTests {
 
-        protected sealed override IDistinctGenerator<T> MaybeDefaultDistinct<T>(
+        protected sealed override MaybeDefaultDistinctGenerator<T> MaybeDefaultDistinct<T>(
             IComparableGenerator<T> inner) {
 
             return this.MaybeDefaultComparable<T>(inner);
         }
 
-        protected sealed override IDistinctGenerator<T> MaybeDefaultDistinct<T>(
+        protected sealed override MaybeDefaultDistinctGenerator<T> MaybeDefaultDistinct<T>(
             IComparableGenerator<T> inner,
             decimal percentage) {
 
             return this.MaybeDefaultComparable<T>(inner, percentage);
         }
 
-        protected virtual IComparableGenerator<T> MaybeDefaultComparable<T>(
+        protected virtual MaybeDefaultComparableGenerator<T> MaybeDefaultComparable<T>(
             IComparableGenerator<T> inner) {
 
             return new MaybeDefaultComparableGenerator<T>(inner);
         }
 
-        protected virtual IComparableGenerator<T> MaybeDefaultComparable<T>(
+        protected virtual MaybeDefaultComparableGenerator<T> MaybeDefaultComparable<T>(
             IComparableGenerator<T> inner,
             decimal percentage) {
 
@@ -468,7 +468,6 @@ namespace Peddler {
                 $"percentage chance of generating default values, the generator did not " +
                 $"generate a non-default value. The randomization approach is unbalanced."
             );
-
         }
 
     }

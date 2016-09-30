@@ -6,26 +6,26 @@ namespace Peddler {
 
     public class MaybeDefaultDistinctGeneratorTests : MaybeDefaultGeneratorTests {
 
-        protected sealed override IGenerator<T> MaybeDefault<T>(
+        protected sealed override MaybeDefaultGenerator<T> MaybeDefault<T>(
             IComparableGenerator<T> inner) {
 
             return this.MaybeDefaultDistinct<T>(inner);
         }
 
-        protected sealed override IGenerator<T> MaybeDefault<T>(
+        protected sealed override MaybeDefaultGenerator<T> MaybeDefault<T>(
             IComparableGenerator<T> inner,
             decimal percentage) {
 
             return this.MaybeDefaultDistinct<T>(inner, percentage);
         }
 
-        protected virtual IDistinctGenerator<T> MaybeDefaultDistinct<T>(
+        protected virtual MaybeDefaultDistinctGenerator<T> MaybeDefaultDistinct<T>(
             IComparableGenerator<T> inner) {
 
             return new MaybeDefaultDistinctGenerator<T>(inner);
         }
 
-        protected virtual IDistinctGenerator<T> MaybeDefaultDistinct<T>(
+        protected virtual MaybeDefaultDistinctGenerator<T> MaybeDefaultDistinct<T>(
             IComparableGenerator<T> inner,
             decimal percentage) {
 
@@ -155,11 +155,17 @@ namespace Peddler {
             }
 
             Assert.True(
-                hasDefault && hasNonDefault,
+                hasDefault,
                 $"After {extendedNumberOfAttempts:N0} attempts with a {percentage * 100}% " +
                 $"percentage chance of generating default values, the generator did not " +
-                $"generate both a default and non-default value. The randomization approach " +
-                $"is unbalanced."
+                $"generate a default value. The randomization approach is unbalanced."
+            );
+
+            Assert.True(
+                hasNonDefault,
+                $"After {extendedNumberOfAttempts:N0} attempts with a {percentage * 100}% " +
+                $"percentage chance of generating default values, the generator did not " +
+                $"generate a non-default value. The randomization approach is unbalanced."
             );
         }
 

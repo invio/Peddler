@@ -117,6 +117,37 @@ namespace Peddler {
             }
         }
 
+        [Fact]
+        public void Constructor_WithoutDefault_DefaultValueIsDefaultForType() {
+            var inner = new Int32Generator();
+
+            Assert.Equal(
+                default(Int32),
+                this.MaybeDefault(inner).DefaultValue
+            );
+
+            Assert.Equal(
+                default(Int32),
+                this.MaybeDefault(inner, 0.5m).DefaultValue
+            );
+        }
+
+        [Fact]
+        public void Constructor_WithDefault_DefaultValueRespectsInjectedValue() {
+            var inner = new Int32Generator();
+            var defaultValue = inner.Next();
+
+            Assert.Equal(
+                defaultValue,
+                this.MaybeDefault(inner, defaultValue).DefaultValue
+            );
+
+            Assert.Equal(
+                defaultValue,
+                this.MaybeDefault(inner, defaultValue, 0.5m).DefaultValue
+            );
+        }
+
         [Theory]
         [MemberData(nameof(Constructor_PercentageAboveOne_Data))]
         public void Constructor_PercentageAboveOne(decimal percentage) {

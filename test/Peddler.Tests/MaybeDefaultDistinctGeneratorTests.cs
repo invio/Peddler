@@ -140,7 +140,10 @@ namespace Peddler {
                     new object[] { new DefaultGenerator<object>() },
                     new object[] { new DefaultGenerator<int>() },
                     new object[] { new DefaultGenerator<FakeClass>() },
-                    new object[] { new DefaultGenerator<FakeStruct>() }
+                    new object[] { new DefaultGenerator<FakeStruct>() },
+                    new object[] { new DefaultGenerator<object>(new object()) },
+                    new object[] { new DefaultGenerator<int>(5) },
+                    new object[] { new DefaultGenerator<FakeClass>(new FakeClass(-2)) }
                 };
             }
         }

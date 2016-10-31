@@ -87,7 +87,7 @@ Peddler includes implementations for many of the basic data types of the .NET Fr
 | [Guid](src/Peddler/GuidGenerator.cs) | X | X |   |   |
 | [DateTime](src/Peddler/DateTimeGenerator.cs) | X | X | X | Enforces consistent use of [`DateTimeKind`](https://msdn.microsoft.com/en-us/library/shx7s921.aspx) |
 | [String](src/Peddler/StringGenerator.cs) | X | X |   | Uses [`StringComparison.Ordinal`](https://msdn.microsoft.com/en-us/library/system.stringcomparison.aspx) rules |
-| [Enum<T>](src/Peddler/EnumGenerator.cs) | X | X |   |   |
+| [Enum&lt;T&gt;](src/Peddler/EnumGenerator.cs) | X | X |   |   |
 | [Boolean](src/Peddler/BooleanGenerator.cs) | X | X |   |   |
 
 ## Wrapper Implementations
@@ -95,13 +95,13 @@ Peddler also includes implementations that wrap around base implementations or c
 
 | Type | `IGenerator<T>` | `IDistinctGenerator<T>` | `IComparableGenerator<T>` | Notes |
 | ---- |:---------------:|:-----------------------:|:-------------------------:| ----- |
-| [MaybeDefault<T>](src/Peddler/MaybeDefaultGenerator.cs) | X | | | Returns predefined "default value" periodically
-| [MaybeDefaultDistinct<T>](src/Peddler/MaybeDefaultDistinctGenerator.cs) | X | X | | Returns predefined "default value" periodically
-| [MaybeDefaultComparable<T>](src/Peddler/MaybeDefaultComparableGenerator.cs) | X | X | X | Returns predefined "default value" periodically
-| [Nullable<T>](src/Peddler/NullableGenerator.cs) | X | | | Converts `<T>` to `Nullable<T>`
-| [NullableDistinct<T>](src/Peddler/NullableDistinctGenerator.cs) | X | X | | Converts `<T>` to `Nullable<T>`
-| [NullableComparable<T>](src/Peddler/NullableComparableGenerator.cs) | X | X | X | Converts `<T>` to `Nullable<T>`
-| [Set<T>](src/Peddler/SetGenerator.cs) | X | X | | Returns values from injected `ISet<T>`
+| [MaybeDefault&lt;T&gt;](src/Peddler/MaybeDefaultGenerator.cs) | X | | | Returns predefined "default value" periodically
+| [MaybeDefaultDistinct&lt;T&gt;](src/Peddler/MaybeDefaultDistinctGenerator.cs) | X | X | | Returns predefined "default value" periodically
+| [MaybeDefaultComparable&lt;T&gt;](src/Peddler/MaybeDefaultComparableGenerator.cs) | X | X | X | Returns predefined "default value" periodically
+| [Nullable&lt;T&gt;](src/Peddler/NullableGenerator.cs) | X | | | Converts `<T>` to `Nullable<T>`
+| [NullableDistinct&lt;T&gt;](src/Peddler/NullableDistinctGenerator.cs) | X | X | | Converts `<T>` to `Nullable<T>`
+| [NullableComparable&lt;T&gt;](src/Peddler/NullableComparableGenerator.cs) | X | X | X | Converts `<T>` to `Nullable<T>`
+| [Set&lt;T&gt;](src/Peddler/SetGenerator.cs) | X | X | | Returns values from injected `ISet<T>`
 
 
 ## Constraints

@@ -102,7 +102,7 @@ Peddler also includes implementations that wrap around base implementations or c
 | [NullableDistinct&lt;T&gt;](src/Peddler/NullableDistinctGenerator.cs) | X | X | | Converts `<T>` to `Nullable<T>`
 | [NullableComparable&lt;T&gt;](src/Peddler/NullableComparableGenerator.cs) | X | X | X | Converts `<T>` to `Nullable<T>`
 | [Set&lt;T&gt;](src/Peddler/SetGenerator.cs) | X | X | | Returns values from injected `ISet<T>`
-
+| [ListOf&lt;T&gt;](src/Peddler/ListOfGenerator.cs) | X | | | Returns immutable lists with values of type `T`
 
 ## Constraints
 

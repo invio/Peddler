@@ -31,8 +31,8 @@ namespace Peddler {
                     .Select(Convert.ToInt32);
 
             foreach (var character in filtered) {
-                Assert.True(character >= 0, $"Unexpected character '\\u{character:x4}'.");
-                Assert.True(character <= 31, $"Unexpected character '\\u{character:x4}'.");
+                Assert.True(character >= 0, $"Unexpected character '\\u{(int)character:x4}'.");
+                Assert.True(character <= 31, $"Unexpected character '\\u{(int)character:x4}'.");
             }
         }
 
@@ -47,8 +47,8 @@ namespace Peddler {
             Assert.Contains(126, characters);
 
             foreach (var character in characters) {
-                Assert.True(character >= 32, $"Unexpected character '\\u{character:x4}'.");
-                Assert.True(character <= 126, $"Unexpected character '\\u{character:x4}'.");
+                Assert.True(character >= 32, $"Unexpected character '\\u{(int)character:x4}'.");
+                Assert.True(character <= 126, $"Unexpected character '\\u{(int)character:x4}'.");
             }
         }
 
@@ -63,8 +63,8 @@ namespace Peddler {
             Assert.Contains(255, characters);
 
             foreach (var character in characters) {
-                Assert.True(character >= 128, $"Unexpected character '\\u{character:x4}'.");
-                Assert.True(character <= 255, $"Unexpected character '\\u{character:x4}'.");
+                Assert.True(character >= 128, $"Unexpected character '\\u{(int)character:x4}'.");
+                Assert.True(character <= 255, $"Unexpected character '\\u{(int)character:x4}'.");
             }
         }
 
@@ -75,7 +75,7 @@ namespace Peddler {
             foreach (var character in CharacterSets.AsciiAlphabetical) {
                 Assert.True(
                     Char.IsLetter(character),
-                    $"Unexpected character '\\u{character:x4}'."
+                    $"Unexpected character '\\u{(int)character:x4}'."
                 );
 
                 if (Char.IsLower(character)) {

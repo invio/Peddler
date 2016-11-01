@@ -6,8 +6,8 @@ using System.Linq;
 namespace Peddler {
 
     /// <summary>
-    ///   An <see cref="IDistinctGenerator{T}" /> that provides values from an explicit
-    ///   for providing instances of type <typeparamref name="T" />.
+    ///   An <see cref="IDistinctGenerator{T}" /> that provides values from an
+    ///   injected set of instances of type <typeparamref name="T" />.
     /// </summary>
     /// <typeparam name="T">
     ///   The C#/.NET Type of value generated.

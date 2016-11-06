@@ -1,6 +1,7 @@
 language: csharp
 sudo: required
 dotnet: 1.0.0-preview2-003121
+mono: none # see comments in build.sh
 
 matrix:
   include:
@@ -16,5 +17,4 @@ branches:
 before_script:
   - chmod a+x ./build.sh
 script:
-  - dotnet --info
   - ./build.sh

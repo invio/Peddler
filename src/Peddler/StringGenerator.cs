@@ -102,16 +102,15 @@ namespace Peddler {
 
             if (length < 0) {
                 throw new ArgumentOutOfRangeException(
-                    $"The length ({length:N0} was less than zero.",
-                    nameof(length)
+                    nameof(length),
+                    $"The length ({length:N0}) was less than zero."
                 );
             }
 
             if (!characters.Any() && length > 0) {
                 throw new ArgumentException(
                     $"The '{nameof(characters)}' set is empty, " +
-                    $"but the '{nameof(length)}' is greater than 0.",
-                    nameof(characters)
+                    $"but the '{nameof(length)}' is greater than 0."
                 );
             }
 
@@ -188,24 +187,22 @@ namespace Peddler {
 
             if (minimum < 0) {
                 throw new ArgumentOutOfRangeException(
-                    $"The minimum ({minimum:N0} was less than zero.",
-                    nameof(minimum)
+                    nameof(minimum),
+                    $"The minimum ({minimum:N0} was less than zero."
                 );
             }
 
             if (maximum < minimum) {
                 throw new ArgumentException(
                     $"The '{nameof(minimum)}' ({minimum:N0}) was not less than " +
-                    $"the '{nameof(maximum)}' ({maximum:N0}).",
-                    nameof(minimum)
+                    $"the '{nameof(maximum)}' ({maximum:N0})."
                 );
             }
 
             if (!characters.Any() && maximum > 0) {
                 throw new ArgumentException(
                     $"The '{nameof(characters)}' set is empty, " +
-                    $"but the '{nameof(maximum)}' is greater than 0.",
-                    nameof(characters)
+                    $"but the '{nameof(maximum)}' is greater than 0."
                 );
             }
 

@@ -188,7 +188,7 @@ namespace Peddler {
             if (minimum < 0) {
                 throw new ArgumentOutOfRangeException(
                     nameof(minimum),
-                    $"The minimum ({minimum:N0} was less than zero."
+                    $"The minimum ({minimum:N0}) was less than zero."
                 );
             }
 

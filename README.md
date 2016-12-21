@@ -87,6 +87,7 @@ Peddler includes implementations for many of the basic data types of the .NET Fr
 | [Guid](src/Peddler/GuidGenerator.cs) | X | X |   |   |
 | [SequentialGuid](src/Peddler/SequentialGuidGenerator.cs) | X | X |   | Uses 6 bytes of timestamp data and 10 bytes of random data to generate GUIDs sequentially
 | [DateTime](src/Peddler/DateTimeGenerator.cs) | X | X | X | Enforces consistent use of [`DateTimeKind`](https://msdn.microsoft.com/en-us/library/shx7s921.aspx) |
+| [TimeSpan](src/Peddler/TimeSpanGenerator.cs) | X | X | X |   |
 | [String](src/Peddler/StringGenerator.cs) | X | X |   | Uses [`StringComparison.Ordinal`](https://msdn.microsoft.com/en-us/library/system.stringcomparison.aspx) rules |
 | [Enum&lt;T&gt;](src/Peddler/EnumGenerator.cs) | X | X |   |   |
 | [Boolean](src/Peddler/BooleanGenerator.cs) | X | X |   |   |

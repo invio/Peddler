@@ -26,9 +26,17 @@ namespace Peddler {
         }
 
         private static TIntegral ToIntegral(Object value) {
+            if (typeof(TIntegral) == typeof(TimeSpan)) {
+                // TimeSpan integral value is 'ticks', which isn't supported
+                // by Convert.ChangeType
+                value = new TimeSpan(
+                    (Int64)Convert.ChangeType(value, typeof(Int64))
+                );
+            }
+
             if (typeof(TIntegral) == typeof(DateTime)) {
-                // DateTime integral value is ticks', which isn't supported
-                // Convert.ChangeType.
+                // DateTime integral value is 'ticks', which isn't supported
+                // by Convert.ChangeType.
                 value = new DateTime(
                     (Int64)Convert.ChangeType(value, typeof(Int64)),
                     DateTimeKind.Unspecified
@@ -50,8 +58,11 @@ namespace Peddler {
                 }
 
                 if (typeof(TIntegral) == typeof(DateTime)) {
-
                     return ToIntegral(((DateTime)(object)value).Ticks + amount);
+                }
+
+                if (typeof(TIntegral) == typeof(TimeSpan)) {
+                    return ToIntegral(((TimeSpan)(object)value).Ticks + amount);
                 }
 
                 return ToIntegral(Convert.ToInt64(value) + amount);
@@ -422,32 +433,52 @@ namespace Peddler {
             }
         }
 
-        private static void AssertLessThan(TIntegral low, TIntegral high) {
+        private void AssertLessThan(TIntegral low, TIntegral high) {
             Assert.True(
                 low.CompareTo(high) < 0,
-                $"Expected '{low:N0}' to be less than '{high:N0}'."
+                String.Format(
+                    "Expected '{0}' to be less than '{1}'.",
+                    this.FormatValue(low),
+                    this.FormatValue(high)
+                )
             );
         }
 
-        private static void AssertLessThanOrEqualTo(TIntegral low, TIntegral high) {
+        private void AssertLessThanOrEqualTo(TIntegral low, TIntegral high) {
             Assert.True(
                 low.CompareTo(high) <= 0,
-                $"Expected '{low:N0}' to be less than or equal to '{high:N0}'."
+                String.Format(
+                    "Expected '{0}' to be less than or equal to '{1}'.",
+                    this.FormatValue(low),
+                    this.FormatValue(high)
+                )
             );
         }
 
-        private static void AssertGreaterThan(TIntegral low, TIntegral high) {
+        private void AssertGreaterThan(TIntegral low, TIntegral high) {
             Assert.True(
                 low.CompareTo(high) > 0,
-                $"Expected '{low:N0}' to be greater than '{high:N0}'."
+                String.Format(
+                    "Expected '{0}' to be greater than '{1}'.",
+                    this.FormatValue(low),
+                    this.FormatValue(high)
+                )
             );
         }
 
-        private static void AssertGreaterThanOrEqualTo(TIntegral low, TIntegral high) {
+        private void AssertGreaterThanOrEqualTo(TIntegral low, TIntegral high) {
             Assert.True(
                 low.CompareTo(high) >= 0,
-                $"Expected '{low:N0}' to be greater than or equal to '{high:N0}'."
+                String.Format(
+                    "Expected '{0}' to be greater than or equal to '{1}'.",
+                    this.FormatValue(low),
+                    this.FormatValue(high)
+                )
             );
+        }
+
+        protected virtual String FormatValue(TIntegral value) {
+            return $"{value:N0}";
         }
 
     }

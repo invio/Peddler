@@ -97,7 +97,7 @@ namespace Peddler {
         ///   that can be created by this <see cref="DateTimeGenerator" />.
         /// </param>
         /// <exception cref="ArgumentException">
-        ///   Thrown when <paramref name="low" /> is earlier than or equal to
+        ///   Thrown when <paramref name="low" /> is later than or equal to
         ///   <paramref name="high" />.
         /// </exception>
         /// <exception cref="ArgumentException">
@@ -340,7 +340,7 @@ namespace Peddler {
         /// </param>
         /// <returns>
         ///   A <see cref="DateTime" /> that is earlier than or equal to both
-        ///   <paramref name="other" /> (in terms of ticks).
+        ///   <paramref name="other" /> and <see cref="High" /> (in terms of ticks).
         ///   The <see cref="DateTimeKind" /> on the <see cref="DateTime" />
         ///   returned will be equal to the <see cref="Kind" /> property.
         /// </returns>

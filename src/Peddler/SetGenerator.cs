@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 
 namespace Peddler {
 
@@ -14,10 +15,12 @@ namespace Peddler {
     /// </typeparam>
     public class SetGenerator<T> : IDistinctGenerator<T> {
 
+        private static ThreadLocal<Random> random { get; } =
+            new ThreadLocal<Random>(() => new Random());
+
         /// <inheritdoc />
         public virtual IEqualityComparer<T> EqualityComparer { get; }
 
-        private Random random { get; } = new Random();
         private ImmutableArray<T> valuesLookup { get; }
 
         /// <summary>
@@ -95,7 +98,7 @@ namespace Peddler {
 
         /// <inheritdoc />
         public T Next() {
-            return this.valuesLookup[this.random.Next(0, this.valuesLookup.Length)];
+            return this.valuesLookup[random.Value.Next(0, this.valuesLookup.Length)];
         }
 
         /// <inheritdoc />
@@ -116,7 +119,7 @@ namespace Peddler {
                 );
             }
 
-            var nextIndex = this.random.Next(0, this.valuesLookup.Length - 1);
+            var nextIndex = random.Value.Next(0, this.valuesLookup.Length - 1);
 
             if (currentIndex == nextIndex) {
                 nextIndex++;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 namespace Peddler {
 
@@ -11,10 +12,12 @@ namespace Peddler {
     /// </summary>
     public class EnumGenerator<TEnum> : IDistinctGenerator<TEnum> where TEnum : struct {
 
+        private static ThreadLocal<Random> random { get; }
         private static Lazy<ISet<TEnum>> defaultValues { get; }
         private static IEqualityComparer<TEnum> defaultEqualityComparer { get; }
 
         static EnumGenerator() {
+            random = new ThreadLocal<Random>(() => new Random());
             defaultValues = new Lazy<ISet<TEnum>>(GetEnumValues);
             defaultEqualityComparer = EqualityComparer<TEnum>.Default;
         }
@@ -47,7 +50,6 @@ namespace Peddler {
         /// <inheritdoc />
         public IEqualityComparer<TEnum> EqualityComparer { get; } = defaultEqualityComparer;
 
-        private Random random { get; } = new Random();
         private TEnum[] valuesLookup { get; }
         private IDictionary<TEnum, int> valuesReverseLookup { get; }
 
@@ -119,7 +121,7 @@ namespace Peddler {
 
         /// <inheritdoc />
         public virtual TEnum Next() {
-            return this.valuesLookup[this.random.Next(this.valuesLookup.Length)];
+            return this.valuesLookup[random.Value.Next(this.valuesLookup.Length)];
         }
 
         /// <inheritdoc />
@@ -140,7 +142,7 @@ namespace Peddler {
                 );
             }
 
-            var nextIndex = this.random.Next(this.valuesLookup.Length - 1);
+            var nextIndex = random.Value.Next(this.valuesLookup.Length - 1);
 
             if (nextIndex >= index) {
                 nextIndex++;

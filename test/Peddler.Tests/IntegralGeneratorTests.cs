@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Peddler {
@@ -430,6 +433,55 @@ namespace Peddler {
                 AssertGreaterThanOrEqualTo(value, generator.Low);
                 AssertLessThan(value, generator.High);
                 Assert.True(generator.Comparer.Compare(other, value) >= 0);
+            }
+        }
+
+        [Fact]
+        public async Task ThreadSafety() {
+
+            // Arrange
+
+            var zero = ToIntegral(0);
+            var consecutiveZeros = new ConcurrentStack<TIntegral>();
+            var generator = this.CreateGenerator(zero);
+
+            Action createThread =
+                () => this.ThreadSafetyImpl(zero, generator, consecutiveZeros);
+
+            // Act
+
+            var threads =
+                Enumerable
+                    .Range(0, 10)
+                    .Select(_ => Task.Run(createThread))
+                    .ToArray();
+
+            await Task.WhenAll(threads);
+
+            // Assert
+
+            Assert.True(
+                consecutiveZeros.Count < 50,
+                $"System.Random is not thread safe. If one of its .Next() " +
+                $"implementations is called simultaneously on several " +
+                $"threads, it breaks and starts returning zero exclusively. " +
+                $"The last {consecutiveZeros.Count:N0} values were zero."
+            );
+        }
+
+        private void ThreadSafetyImpl(
+            TIntegral zero,
+            IGenerator<TIntegral> generator,
+            ConcurrentStack<TIntegral> consecutiveZeros) {
+
+            var count = 0;
+
+            while (count++ < 10000) {
+                if (generator.Next().Equals(zero)) {
+                    consecutiveZeros.Push(zero);
+                } else {
+                    consecutiveZeros.Clear();
+                }
             }
         }
 

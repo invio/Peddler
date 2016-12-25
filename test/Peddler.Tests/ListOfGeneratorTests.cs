@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Peddler {
@@ -241,6 +243,55 @@ namespace Peddler {
                 Assert.NotNull(value);
                 AssertCountBetween(value, minimumSize, maximumSize);
                 AssertImmutable(value);
+            }
+        }
+
+        [Fact]
+        public async Task ThreadSafety() {
+
+            // Arrange
+
+            var generator = new ListOfGenerator<Int32>(new Int32Generator(), 0, 10);
+            var consecutiveZeroLengths = new ConcurrentStack<Int32>();
+
+            Action createThread =
+                () => this.ThreadSafetyImpl(generator, consecutiveZeroLengths);
+
+            // Act
+
+            var threads =
+                Enumerable
+                    .Range(0, 10)
+                    .Select(_ => Task.Run(createThread))
+                    .ToArray();
+
+            await Task.WhenAll(threads);
+
+            // Assert
+
+            Assert.True(
+                consecutiveZeroLengths.Count < 50,
+                $"System.Random is not thread safe. If one of its .Next() " +
+                $"implementations is called simultaneously on several " +
+                $"threads, it breaks and starts returning zero exclusively. " +
+                $"The last {consecutiveZeroLengths.Count:N0} lists had " +
+                $"a length of zero, signifying its internal System.Random " +
+                $"is in a broken state."
+            );
+        }
+
+        private void ThreadSafetyImpl(
+            IGenerator<IList<Int32>> generator,
+            ConcurrentStack<Int32> consecutiveZeroLengths) {
+
+            var count = 0;
+
+            while (count++ < 10000) {
+                if (generator.Next().Count == 0) {
+                    consecutiveZeroLengths.Push(0);
+                } else {
+                    consecutiveZeroLengths.Clear();
+                }
             }
         }
 

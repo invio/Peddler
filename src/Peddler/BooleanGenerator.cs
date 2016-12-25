@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Peddler {
 
@@ -8,7 +9,8 @@ namespace Peddler {
     /// </summary>
     public class BooleanGenerator : IDistinctGenerator<Boolean> {
 
-        private Random random { get; }
+        private static ThreadLocal<Random> random { get; } =
+            new ThreadLocal<Random>(() => new Random());
 
         /// <inheritdoc />
         public IEqualityComparer<Boolean> EqualityComparer { get; }
@@ -19,13 +21,12 @@ namespace Peddler {
         ///   of <c>true</c> and <c>false</c>.
         /// </summary>
         public BooleanGenerator() {
-            this.random = new Random();
             this.EqualityComparer = EqualityComparer<Boolean>.Default;
         }
 
         /// <inheritdoc />
         public Boolean Next() {
-            return this.random.NextBoolean();
+            return random.Value.NextBoolean();
         }
 
         /// <inheritdoc />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Peddler {
 
@@ -11,15 +12,16 @@ namespace Peddler {
     /// </summary>
     public class StringGenerator : IDistinctGenerator<String> {
 
+        private static ThreadLocal<Random> random { get; }
         private static ISet<Char> defaultCharacters { get; }
         private static StringComparer defaultComparer { get; }
 
         static StringGenerator() {
+            random = new ThreadLocal<Random>(() => new Random());
             defaultCharacters = CharacterSets.AsciiPrintable;
             defaultComparer = StringComparer.Ordinal;
         }
 
-        private Random random { get; } = new Random();
         private char[] charactersLookup { get; }
 
         /// <summary>
@@ -213,14 +215,14 @@ namespace Peddler {
         }
 
         private int NextInt32Inclusive(int low, int high) {
-            return (Int32)this.random.NextInt64(low, (Int64)(high + 1));
+            return (Int32)random.Value.NextInt64(low, (Int64)(high + 1));
         }
 
         private String NextOfLength(int length) {
             var buffer = new StringBuilder(length);
 
             for (var character = 0; character < length; character++) {
-                var index = this.random.Next(this.charactersLookup.Length);
+                var index = random.Value.Next(this.charactersLookup.Length);
 
                 buffer.Append(this.charactersLookup[index]);
             }
@@ -353,7 +355,7 @@ namespace Peddler {
                     }
                 }
 
-                buffer.Append(lookup[this.random.Next(lookup.Length)]);
+                buffer.Append(lookup[random.Value.Next(lookup.Length)]);
                 isDistinct = isDistinct || buffer[index] != other[index];
             }
 

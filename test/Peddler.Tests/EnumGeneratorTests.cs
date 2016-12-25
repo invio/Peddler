@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Peddler {
@@ -247,6 +249,55 @@ namespace Peddler {
                 Assert.False(generator.EqualityComparer.Equals(previousValue, value));
 
                 previousValue = value;
+            }
+        }
+
+        [Fact]
+        public async Task ThreadSafety() {
+
+            // Arrange
+
+            var generator = new EnumGenerator<ValidEnum>();
+            var consecutiveDefaults = new ConcurrentStack<ValidEnum>();
+
+            Action createThread =
+                () => this.ThreadSafetyImpl<ValidEnum>(generator, consecutiveDefaults);
+
+            // Act
+
+            var threads =
+                Enumerable
+                    .Range(0, 10)
+                    .Select(_ => Task.Run(createThread))
+                    .ToArray();
+
+            await Task.WhenAll(threads);
+
+            // Assert
+
+            Assert.True(
+                consecutiveDefaults.Count < 50,
+                $"System.Random is not thread safe. If one of its .Next() " +
+                $"implementations is called simultaneously on several " +
+                $"threads, it breaks and starts returning zero exclusively. " +
+                $"The last {consecutiveDefaults.Count:N0} values were the " +
+                $"default value, signifying its internal System.Random is " +
+                $"in a broken state."
+            );
+        }
+
+        private void ThreadSafetyImpl<TEnum>(
+            IGenerator<TEnum> generator,
+            ConcurrentStack<TEnum> consecutiveDefaults) {
+
+            var count = 0;
+
+            while (count++ < 10000) {
+                if (generator.Next().Equals(default(TEnum))) {
+                    consecutiveDefaults.Push(default(TEnum));
+                } else {
+                    consecutiveDefaults.Clear();
+                }
             }
         }
 

@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Peddler {
@@ -371,6 +373,55 @@ namespace Peddler {
             Assert.Throws<UnableToGenerateValueException>(
                 () => generator.NextDistinct(other)
             );
+        }
+
+        [Fact]
+        public async Task ThreadSafety() {
+
+            // Arrange
+
+            var generator = new StringGenerator(0, 1000);
+            var consecutiveEmptyStrings = new ConcurrentStack<String>();
+
+            Action createThread =
+                () => this.ThreadSafetyImpl(generator, consecutiveEmptyStrings);
+
+            // Act
+
+            var threads =
+                Enumerable
+                    .Range(0, 10)
+                    .Select(_ => Task.Run(createThread))
+                    .ToArray();
+
+            await Task.WhenAll(threads);
+
+            // Assert
+
+            Assert.True(
+                consecutiveEmptyStrings.Count < 50,
+                $"System.Random is not thread safe. If one of its .Next() " +
+                $"implementations is called simultaneously on several " +
+                $"threads, it breaks and starts returning zero exclusively. " +
+                $"The last {consecutiveEmptyStrings.Count:N0} values were " +
+                $"the empty string, signifying its internal System.Random " +
+                $"is in a broken state."
+            );
+        }
+
+        private void ThreadSafetyImpl(
+            IGenerator<String> generator,
+            ConcurrentStack<String> consecutiveEmptyStrings) {
+
+            var count = 0;
+
+            while (count++ < 10000) {
+                if (generator.Next().Equals(String.Empty)) {
+                    consecutiveEmptyStrings.Push(String.Empty);
+                } else {
+                    consecutiveEmptyStrings.Clear();
+                }
+            }
         }
 
         // Syntactic sugar.

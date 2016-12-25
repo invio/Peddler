@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 namespace Peddler {
 
@@ -13,13 +14,15 @@ namespace Peddler {
     /// </remarks>
     public class MaybeDefaultGenerator<T> : IGenerator<T> {
 
+        private static ThreadLocal<Random> random { get; } =
+            new ThreadLocal<Random>(() => new Random());
+
         /// <summary>
         ///   The value that is considered "the default value" that will
         ///   be occasionally be returned by this generator.
         /// </summary>
         public T DefaultValue { get; }
 
-        private Random random { get; } = new Random();
         private IGenerator<T> inner { get; }
         private decimal percentage { get; }
 
@@ -143,7 +146,7 @@ namespace Peddler {
         ///   should be returned instead of a value from the inner <see cref="IGenerator{T}" />.
         /// </summary>
         protected bool MaybeDefault() {
-            return (percentage - ((decimal)this.random.NextDouble())) >= 0m;
+            return (percentage - ((decimal)random.Value.NextDouble())) >= 0m;
         }
 
         /// <inheritdoc />

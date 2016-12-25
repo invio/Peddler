@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Peddler {
@@ -235,6 +237,58 @@ namespace Peddler {
                 Assert.Contains(value, values, generator.EqualityComparer);
 
                 previousValue = value;
+            }
+        }
+
+        [Fact]
+        public async Task ThreadSafety() {
+
+            // Arrange
+
+            var values = new HashSet<Int32> { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+            var firstValue = values.ToArray()[0];
+            var generator = new SetGenerator<Int32>(values);
+            var consecutiveFirstValues = new ConcurrentStack<Int32>();
+
+            Action createThread =
+                () => this.ThreadSafetyImpl(firstValue, generator, consecutiveFirstValues);
+
+            // Act
+
+            var threads =
+                Enumerable
+                    .Range(0, 10)
+                    .Select(_ => Task.Run(createThread))
+                    .ToArray();
+
+            await Task.WhenAll(threads);
+
+            // Assert
+
+            Assert.True(
+                consecutiveFirstValues.Count < 50,
+                $"System.Random is not thread safe. If one of its .Next() " +
+                $"implementations is called simultaneously on several " +
+                $"threads, it breaks and starts returning zero exclusively. " +
+                $"The last {consecutiveFirstValues.Count:N0} sets " +
+                $"returned the first value from the set, signifying its " +
+                $"internal System.Random is in a broken state."
+            );
+        }
+
+        private void ThreadSafetyImpl<T>(
+            T firstValue,
+            IGenerator<T> generator,
+            ConcurrentStack<T> consecutiveFirstValues) {
+
+            var count = 0;
+
+            while (count++ < 10000) {
+                if (generator.Next().Equals(firstValue)) {
+                    consecutiveFirstValues.Push(firstValue);
+                } else {
+                    consecutiveFirstValues.Clear();
+                }
             }
         }
 

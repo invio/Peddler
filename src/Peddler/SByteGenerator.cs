@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 namespace Peddler {
 
@@ -12,7 +13,8 @@ namespace Peddler {
     /// </remarks>
     public class SByteGenerator : IntegralGenerator<SByte> {
 
-        private Random random { get; } = new Random();
+        private static ThreadLocal<Random> random { get; } =
+            new ThreadLocal<Random>(() => new Random());
 
         /// <summary>
         ///   Instantiates an <see cref="SByteGenerator" /> that can create
@@ -53,7 +55,7 @@ namespace Peddler {
 
         /// <inheritdoc />
         protected override sealed SByte Next(SByte low, SByte high) {
-            return this.random.NextSByte(low, high);
+            return random.Value.NextSByte(low, high);
         }
 
         /// <inheritdoc />

@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Peddler {
@@ -282,6 +284,55 @@ namespace Peddler {
                 $"percentage chance of generating default values, the generator did not " +
                 $"generate a non-default value. The randomization approach is unbalanced."
             );
+        }
+
+        [Fact]
+        public async Task ThreadSafety() {
+
+            // Arrange
+
+            var generator = this.MaybeDefault(new Int32Generator(1, Int32.MaxValue), 0.5m);
+            var consecutiveDefaults = new ConcurrentStack<Int32>();
+
+            Action createThread =
+                () => this.ThreadSafetyImpl(generator, consecutiveDefaults);
+
+            // Act
+
+            var threads =
+                Enumerable
+                    .Range(0, 10)
+                    .Select(_ => Task.Run(createThread))
+                    .ToArray();
+
+            await Task.WhenAll(threads);
+
+            // Assert
+
+            Assert.True(
+                consecutiveDefaults.Count < 50,
+                $"System.Random is not thread safe. If one of its .Next() " +
+                $"implementations is called simultaneously on several " +
+                $"threads, it breaks and starts returning zero exclusively. " +
+                $"The last {consecutiveDefaults.Count:N0} values were " +
+                $"the null, signifying its internal System.Random is in " +
+                $"a broken state."
+            );
+        }
+
+        private void ThreadSafetyImpl<T>(
+            IGenerator<T> generator,
+            ConcurrentStack<T> consecutiveDefaults) {
+
+            var count = 0;
+
+            while (count++ < 10000) {
+                if (generator.Next().Equals(default(T))) {
+                    consecutiveDefaults.Push(default(T));
+                } else {
+                    consecutiveDefaults.Clear();
+                }
+            }
         }
 
         public void InvokeGenericMethod(

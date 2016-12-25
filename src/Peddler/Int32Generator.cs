@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 namespace Peddler {
 
@@ -12,7 +13,8 @@ namespace Peddler {
     /// </remarks>
     public class Int32Generator : IntegralGenerator<Int32> {
 
-        private Random random { get; } = new Random();
+        private static ThreadLocal<Random> random { get; } =
+            new ThreadLocal<Random>(() => new Random());
 
         /// <summary>
         ///   Instantiates an <see cref="Int32Generator" /> that can create
@@ -53,7 +55,7 @@ namespace Peddler {
 
         /// <inheritdoc />
         protected override sealed Int32 Next(Int32 low, Int32 high) {
-            return this.random.Next(low, high);
+            return random.Value.Next(low, high);
         }
 
         /// <inheritdoc />

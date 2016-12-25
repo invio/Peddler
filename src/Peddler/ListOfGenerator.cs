@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 
 namespace Peddler {
 
@@ -11,7 +12,9 @@ namespace Peddler {
     /// </summary>
     public class ListOfGenerator<T> : IGenerator<IList<T>> {
 
-        private Random random { get; } = new Random();
+        private static ThreadLocal<Random> random { get; } =
+            new ThreadLocal<Random>(() => new Random());
+
         private IGenerator<T> inner { get; }
         private int minimumSize { get; }
         private int maximumSize { get; }
@@ -138,7 +141,7 @@ namespace Peddler {
         public IList<T> Next() {
             return
                 Enumerable
-                    .Range(0, this.random.Next(this.minimumSize, this.maximumSize + 1))
+                    .Range(0, random.Value.Next(this.minimumSize, this.maximumSize + 1))
                     .Select(_ => this.inner.Next())
                     .ToImmutableList();
         }

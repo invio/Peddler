@@ -16,7 +16,7 @@ PM> Install-Package Peddler
 
 # Basic Usage
 
-Peddler provides two things: Interfaces for how to design and compose your own data generation, as well as a collection of out-of-the-box generator implementations over the basic .NET types, such as DateTime, String, Guid, and Int32.
+Peddler provides two things: Interfaces for how to design and compose your own data generation, as well as a collection of out-of-the-box generator implementations over the basic .NET types, such as DateTime, String, Guid, and Int32. All implementations are thread-safe.
 
 ## Interfaces
 There are three main interfaces. The out-of-the-box generators implement at least one (but generally all three) of them, depending on their data type.

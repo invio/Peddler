@@ -121,7 +121,7 @@ namespace Peddler {
 
             var nextIndex = random.Value.Next(0, this.valuesLookup.Length - 1);
 
-            if (currentIndex == nextIndex) {
+            if (nextIndex >= currentIndex) {
                 nextIndex++;
             }
 

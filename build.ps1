@@ -52,7 +52,8 @@ if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
 
 EnsurePsbuildInstalled
 
-exec { & dotnet restore }
+exec { & dotnet restore .\src\Peddler }
+exec { & dotnet restore .\test\Peddler.Tests }
 
 exec { & dotnet build .\src\Peddler }
 exec { & dotnet build .\test\Peddler.Tests }
@@ -63,6 +64,6 @@ $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
 #  Note from Caruso (9/21/2016):
 #    Appveyor does not appear to be able to test .NET Framework 4.6.2 with xUnit.
 #    So while we're building in 4.6.2, but we are not running tests in 4.6.2
-exec { & dotnet test .\test\Peddler.Tests -c Release -f netcoreapp1.0 }
+exec { & dotnet test .\test\Peddler.Tests\Peddler.Tests.csproj -c Release -f netcoreapp1.0 }
 
-exec { & dotnet pack .\src\Peddler -c Release -o .\artifacts }
+exec { & dotnet pack .\src\Peddler -c Release -o ..\..\artifacts }

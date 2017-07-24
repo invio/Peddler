@@ -9,9 +9,8 @@ if [ -d $artifactsFolder ]; then
   rm -R $artifactsFolder
 fi
 
-dotnet restore ./src/Peddler
-dotnet restore ./test/Peddler.Tests
+dotnet restore
 
 dotnet test ./test/Peddler.Tests/Peddler.Tests.csproj -c Release -f netcoreapp1.0
 
-dotnet pack ./src/Peddler -c Release -o ../../artifacts
+dotnet pack -c Release -o ../../artifacts

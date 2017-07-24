@@ -52,11 +52,8 @@ if(Test-Path .\artifacts) { Remove-Item .\artifacts -Force -Recurse }
 
 EnsurePsbuildInstalled
 
-exec { & dotnet restore .\src\Peddler }
-exec { & dotnet restore .\test\Peddler.Tests }
-
-exec { & dotnet build .\src\Peddler }
-exec { & dotnet build .\test\Peddler.Tests }
+exec { & dotnet restore }
+exec { & dotnet build }
 
 $revision = @{ $true = $env:APPVEYOR_BUILD_NUMBER; $false = 1 }[$env:APPVEYOR_BUILD_NUMBER -ne $NULL];
 $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
@@ -66,4 +63,4 @@ $revision = "{0:D4}" -f [convert]::ToInt32($revision, 10)
 #    So while we're building in 4.6.2, but we are not running tests in 4.6.2
 exec { & dotnet test .\test\Peddler.Tests\Peddler.Tests.csproj -c Release -f netcoreapp1.0 }
 
-exec { & dotnet pack .\src\Peddler -c Release -o ..\..\artifacts }
+exec { & dotnet pack -c Release -o ..\..\artifacts }

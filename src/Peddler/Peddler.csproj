@@ -5,7 +5,7 @@
     <VersionPrefix>0.12.2</VersionPrefix>
     <Authors>Brian Caruso &lt;brian@invioinc.com&gt;</Authors>
     <TargetFramework>netstandard1.5</TargetFramework>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Peddler</AssemblyName>
     <PackageId>Peddler</PackageId>

@@ -107,7 +107,7 @@ namespace Peddler {
             );
         }
 
-        public void NextDistinct_InnerCanGenerateNonDefaultImpl<T>(
+        protected void NextDistinct_InnerCanGenerateNonDefaultImpl<T>(
             IComparableGenerator<T> inner,
             T defaultValue) {
 
@@ -157,7 +157,7 @@ namespace Peddler {
             );
         }
 
-        public void NextDistinct_InnerOnlyReturnsDefaultImpl<T>(
+        protected void NextDistinct_InnerOnlyReturnsDefaultImpl<T>(
             DefaultGenerator<T> inner) {
 
             var generator = this.MaybeDefaultDistinct<T>(inner, inner.DefaultValue);
@@ -206,34 +206,34 @@ namespace Peddler {
 
         [Theory]
         [MemberData(nameof(FakeGenerators))]
-        public void NextDistinct_FiftyPercentageOfDefault(Object inner, Object defaultValue) {
+        public void NextDistinct_GeneratesDefaultAndNonDefault(Object inner, Object defaultValue) {
             this.InvokeGenericMethod(
-                nameof(NextDistinct_FiftyPercentageOfDefaultImpl),
+                nameof(NextDistinct_WithFiftyPercentChangeOfDefault),
                 inner,
                 defaultValue
             );
         }
 
-        public void NextDistinct_FiftyPercentageOfDefaultImpl<T>(
+        protected void NextDistinct_WithFiftyPercentChangeOfDefault<T>(
             IComparableGenerator<T> inner,
             T defaultValue) {
 
             const decimal percentage = 0.5m;
 
-            NextDistinct_FiftyPercentageOfDefaultImpl(
+            NextDistinct_WithFiftyPercentChangeOfDefaultImpl<T>(
                 this.MaybeDefaultDistinct<T>(inner, percentage),
                 inner.EqualityComparer,
                 percentage
             );
 
-            NextDistinct_FiftyPercentageOfDefaultImpl(
+            NextDistinct_WithFiftyPercentChangeOfDefaultImpl<T>(
                 this.MaybeDefaultDistinct<T>(inner, defaultValue, percentage),
                 inner.EqualityComparer,
                 percentage
             );
         }
 
-        private void NextDistinct_FiftyPercentageOfDefaultImpl<T>(
+        private void NextDistinct_WithFiftyPercentChangeOfDefaultImpl<T>(
             MaybeDefaultDistinctGenerator<T> generator,
             IEqualityComparer<T> innerComparer,
             decimal percentage) {

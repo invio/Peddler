@@ -174,7 +174,7 @@ namespace Peddler {
             );
         }
 
-        public void Next_ZeroPercentageOfDefaultImpl<T>(
+        protected void Next_ZeroPercentageOfDefaultImpl<T>(
             IComparableGenerator<T> inner,
             T otherDefault) {
 
@@ -201,7 +201,7 @@ namespace Peddler {
             );
         }
 
-        public void Next_OneHundredPercentageOfDefaultImpl<T>(
+        protected void Next_OneHundredPercentageOfDefaultImpl<T>(
             IComparableGenerator<T> inner,
             T defaultValue) {
 
@@ -220,34 +220,34 @@ namespace Peddler {
 
         [Theory]
         [MemberData(nameof(NonDefaultReturningGenerators))]
-        public void Next_FiftyPercentageOfDefault(Object inner, Object defaultValue) {
+        public void Next_GeneratesDefaultAndNonDefault(Object inner, Object defaultValue) {
             this.InvokeGenericMethod(
-                nameof(Next_FiftyPercentageOfDefaultImpl),
+                nameof(Next_WithFiftyPercentChangeOfDefault),
                 inner,
                 defaultValue
             );
         }
 
-        public void Next_FiftyPercentageOfDefaultImpl<T>(
+        protected void Next_WithFiftyPercentChangeOfDefault<T>(
             IComparableGenerator<T> inner,
             T defaultValue) {
 
             const decimal percentage = 0.5m;
 
-            Next_FiftyPercentageOfDefaultImpl(
+            this.Next_WithFiftyPercentChangeOfDefaultImpl<T>(
                 this.MaybeDefault<T>(inner, percentage),
                 inner.EqualityComparer,
                 percentage
             );
 
-            Next_FiftyPercentageOfDefaultImpl(
+            this.Next_WithFiftyPercentChangeOfDefaultImpl<T>(
                 this.MaybeDefault<T>(inner, defaultValue, percentage),
                 inner.EqualityComparer,
                 percentage
             );
         }
 
-        private void Next_FiftyPercentageOfDefaultImpl<T>(
+        private void Next_WithFiftyPercentChangeOfDefaultImpl<T>(
             MaybeDefaultGenerator<T> generator,
             IEqualityComparer<T> innerComparer,
             decimal percentage) {
@@ -335,7 +335,7 @@ namespace Peddler {
             }
         }
 
-        public void InvokeGenericMethod(
+        protected void InvokeGenericMethod(
             String methodName,
             params Object[] parameters) {
 
@@ -369,7 +369,11 @@ namespace Peddler {
 
             var fakeType = interfaceType.GetGenericArguments().Single();
 
-            var method = this.GetType().GetMethod(methodName);
+            const BindingFlags flags =
+                BindingFlags.Public | BindingFlags.NonPublic |
+                BindingFlags.Static | BindingFlags.Instance;
+
+            var method = this.GetType().GetMethod(methodName, flags);
 
             if (method == null) {
                 throw new ArgumentException($"Unable to find method '{methodName}'");

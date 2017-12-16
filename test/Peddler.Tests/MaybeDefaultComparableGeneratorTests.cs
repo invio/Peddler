@@ -79,7 +79,7 @@ namespace Peddler {
             );
         }
 
-        public void NextLessThan_InnerReturnsDefaultImpl<T>(DefaultGenerator<T> inner) {
+        protected void NextLessThan_InnerReturnsDefaultImpl<T>(DefaultGenerator<T> inner) {
             var generator = this.MaybeDefaultComparable<T>(inner, inner.DefaultValue);
 
             Assert.Throws<UnableToGenerateValueException>(
@@ -195,7 +195,7 @@ namespace Peddler {
             );
         }
 
-        public void NextLessThan_FiftyPercentOfDefaultImpl<T>(
+        protected void NextLessThan_FiftyPercentOfDefaultImpl<T>(
             IComparableGenerator<T> inner,
             T otherValue) {
 
@@ -215,7 +215,7 @@ namespace Peddler {
             );
         }
 
-        public void NextLessThanOrEqualTo_InnerReturnsDefaultImpl<T>(
+        protected void NextLessThanOrEqualTo_InnerReturnsDefaultImpl<T>(
             DefaultGenerator<T> inner) {
 
             var generator = this.MaybeDefaultComparable<T>(inner, inner.DefaultValue);
@@ -295,7 +295,7 @@ namespace Peddler {
             );
         }
 
-        public void NextLessThanOrEqualTo_InnerFailsButDefaultOk_ClassImpl(
+        protected void NextLessThanOrEqualTo_InnerFailsButDefaultOk_ClassImpl(
             MaybeDefaultComparableGenerator<FakeClass> generator) {
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
@@ -361,7 +361,7 @@ namespace Peddler {
             );
         }
 
-        public void NextLessThanOrEqualTo_FiftyPercentOfDefaultImpl<T>(
+        protected void NextLessThanOrEqualTo_FiftyPercentOfDefaultImpl<T>(
             IComparableGenerator<T> inner,
             T otherValue) {
 
@@ -381,7 +381,7 @@ namespace Peddler {
             );
         }
 
-        public void NextGreaterThanOrEqualTo_InnerReturnsDefaultImpl<T>(
+        protected void NextGreaterThanOrEqualTo_InnerReturnsDefaultImpl<T>(
             DefaultGenerator<T> inner) {
 
             var generator = this.MaybeDefaultComparable<T>(inner, inner.DefaultValue);
@@ -416,7 +416,7 @@ namespace Peddler {
             );
         }
 
-        public void NextGreaterThanOrEqualTo_InnerFailsButDefaultOkImpl(
+        protected void NextGreaterThanOrEqualTo_InnerFailsButDefaultOkImpl(
             MaybeDefaultComparableGenerator<FakeStruct> generator) {
 
             for (var attempt = 0; attempt < numberOfAttempts; attempt++) {
@@ -469,7 +469,7 @@ namespace Peddler {
             );
         }
 
-        public void NextGreaterThanOrEqualTo_FiftyPercentOfDefaultImpl<T>(
+        protected void NextGreaterThanOrEqualTo_FiftyPercentOfDefaultImpl<T>(
             IComparableGenerator<T> inner,
             T otherValue) {
 
@@ -489,7 +489,7 @@ namespace Peddler {
             );
         }
 
-        public void NextGreaterThan_InnerReturnsDefaultImpl<T>(DefaultGenerator<T> inner) {
+        protected void NextGreaterThan_InnerReturnsDefaultImpl<T>(DefaultGenerator<T> inner) {
             var generator = this.MaybeDefaultComparable<T>(inner, inner.DefaultValue);
 
             Assert.Throws<UnableToGenerateValueException>(
@@ -560,7 +560,7 @@ namespace Peddler {
             );
         }
 
-        public void NextGreaterThan_FiftyPercentOfDefaultImpl<T>(
+        protected void NextGreaterThan_FiftyPercentOfDefaultImpl<T>(
             IComparableGenerator<T> inner,
             T otherValue) {
 

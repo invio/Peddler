@@ -88,7 +88,7 @@ namespace Peddler {
                 yield return new object[] { Add(minValue, 1), minValue };
                 yield return new object[] { maxValue, minValue };
                 yield return new object[] { minValue, minValue };
-                yield return new object[] { ToIntegral(0), ToIntegral(0) };
+                yield return new object[] { ToIntegral(1), ToIntegral(1) };
                 yield return new object[] { maxValue, maxValue };
             }
         }
@@ -123,7 +123,7 @@ namespace Peddler {
         public static IEnumerable<object[]> Next_WithLowDefined_RangeIsLowToMaxIntegralValue_Data {
             get {
                 yield return new object[] { minValue };
-                yield return new object[] { ToIntegral(0) };
+                yield return new object[] { ToIntegral(1) };
                 yield return new object[] { Add(maxValue, -1) };
             }
         }
@@ -149,7 +149,7 @@ namespace Peddler {
             get {
                 yield return new object[] { minValue, maxValue };
                 yield return new object[] { minValue, ToIntegral(1) };
-                yield return new object[] { ToIntegral(0), maxValue };
+                yield return new object[] { ToIntegral(1), maxValue };
             }
         }
 

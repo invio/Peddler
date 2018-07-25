@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <AssemblyTitle>Data Generation for .NET</AssemblyTitle>
-    <VersionPrefix>0.12.6</VersionPrefix>
+    <VersionPrefix>0.12.7</VersionPrefix>
     <Authors>Brian Caruso &lt;brian@invioinc.com&gt;</Authors>
-    <TargetFramework>netstandard1.5</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Peddler</AssemblyName>
@@ -14,7 +14,6 @@
     <PackageLicenseUrl>https://github.com/invio/Peddler/blob/master/LICENSE.txt</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>git@github.com:invio/Peddler</RepositoryUrl>
-    <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
   </PropertyGroup>
 
   <ItemGroup>

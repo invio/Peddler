@@ -25,8 +25,22 @@ namespace Peddler {
         private static ThreadLocal<Random> random { get; } =
             new ThreadLocal<Random>(() => new Random());
 
-        private const Int32 EpsilonExponent = -323;
-        private const Int32 MinimumIntervalExponentDelta = 16;
+        /// <summary>
+        ///   The default minimum scale when randomly generating values. This is also the minimum
+        ///   permissible value.
+        /// </summary>
+        public const Int32 DefaultEpsilonExponent = -323;
+
+        /// <summary>
+        ///   The maximum permissible value for the <see cref="EpsilonExponent" />.
+        /// </summary>
+        public const Int32 MaximumEpsilonExponent = 308;
+
+        /// <summary>
+        ///   The default number of significant figures to account for when generating random values
+        ///   relative go another value. This is also the maximum permissible value.
+        /// </summary>
+        public const Int32 DefaultSignificantFigures = 16;
 
         /// <summary>
         ///   The minimum value to generate in calls to <see cref="Next()" />. Defaults to
@@ -40,6 +54,20 @@ namespace Peddler {
         /// </summary>
         public Double High { get; }
 
+        /// <summary>
+        ///   The smallest exponent of the scale number to generate. For example, if you never want
+        ///   to generate numbers smaller than 0.000001 then this value would be -6.
+        /// </summary>
+        public Int32 EpsilonExponent { get; }
+
+        /// <summary>
+        ///   The number of significant figures to account for when calculating the minimum interval
+        ///   when producing a distinct value. For example when generating a number that is distinct
+        ///   from 100,000 given a SignificantFigures of 3, the smallest difference between the
+        ///   original value and the generated value would be 100.
+        /// </summary>
+        public Int32 SignificantFigures { get; }
+
         private Int32 defaultMinimumExponent { get; }
         private Int32 defaultMaximumExponent { get; }
         private List<(Int32, Int32)> defaultScales { get; }
@@ -51,13 +79,6 @@ namespace Peddler {
         public IComparer<Double> Comparer => Comparer<Double>.Default;
 
         /// <summary>
-        ///   Creates a default instance of <see cref="DoubleGenerator" /> that produces values from
-        ///   <see cref="Double.MinValue" /> to <see cref="Double.MaxValue" />.
-        /// </summary>
-        public DoubleGenerator() : this(Double.MinValue, Double.MaxValue) {
-        }
-
-        /// <summary>
         ///   Creates an instance of <see cref="DoubleGenerator" /> that produces values between
         ///   <paramref name="low" /> and <paramref name="high" />.
         /// </summary>
@@ -67,9 +88,43 @@ namespace Peddler {
         /// <param name="high">
         ///   The inclusive, upper <see cref="Double" /> boundary for this generator.
         /// </param>
-        public DoubleGenerator(Double low, Double high) {
+        /// <param name="epsilonExponent">
+        ///   See: <see cref="EpsilonExponent" />
+        /// </param>
+        /// <param name="significantFigures">
+        ///   See: <see cref="SignificantFigures" />
+        /// </param>
+        public DoubleGenerator(
+            Double low = Double.MinValue,
+            Double high = Double.MaxValue,
+            Int32 epsilonExponent = DefaultEpsilonExponent,
+            Int32 significantFigures = DefaultSignificantFigures) {
+
+            if (epsilonExponent < DefaultEpsilonExponent || epsilonExponent > MaximumEpsilonExponent) {
+                throw new ArgumentOutOfRangeException(
+                    $"The value for {nameof(epsilonExponent)} must be greater than or equal to " +
+                    $"the minimum exponent for Doubles ({DefaultEpsilonExponent}) and less than " +
+                    $"or equal to the maximum exponent for Doubles ({MaximumEpsilonExponent}).",
+                    epsilonExponent,
+                    nameof(epsilonExponent)
+                );
+            }
+            if (significantFigures < 1 ||
+                significantFigures > DefaultSignificantFigures) {
+
+                throw new ArgumentOutOfRangeException(
+                    $"The value for {nameof(significantFigures)} must be greater than or equal " +
+                    $"to one and less than or equalty the maximum number of significant figures " +
+                    $"for Doubles ({DefaultSignificantFigures}).",
+                    significantFigures,
+                    nameof(significantFigures)
+                );
+            }
+
             this.Low = low;
             this.High = high;
+            this.EpsilonExponent = epsilonExponent;
+            this.SignificantFigures = significantFigures;
 
             (this.defaultMinimumExponent, this.defaultMaximumExponent, this.defaultScales) =
                 CalculateScales(low, high);
@@ -88,25 +143,33 @@ namespace Peddler {
 
         /// <inheritdoc />
         public Double NextDistinct(Double other) {
-            Double result;
-            do {
-                result = this.Next();
-            } while (EqualityComparer.Equals(other, result));
+            var minInterval = CalculateMinInterval(other);
 
-            return result;
+            var value = this.Next();
+
+            if (Math.Abs(value - other) < minInterval) {
+                // In the event that the generated value is within +/- minimum interval of the
+                // original, round it up or down to either other + minInterval or other -
+                // minInterval
+                if (other <= this.High - minInterval) {
+                    if (other >= this.Low + minInterval) {
+                        return value > other ?
+                            other + minInterval :
+                            other - minInterval;
+                    } else {
+                        return other + minInterval;
+                    }
+                } else {
+                    return other - minInterval;
+                }
+            } else {
+                return value;
+            }
         }
 
         /// <inheritdoc />
         public Double NextGreaterThan(Double other) {
-            // The minimum interval between floating point numbers gets larger as the values get
-            // larger.
-            var minInterval =
-                (Double)Math.Pow(
-                    10,
-                    Math.Max(
-                        EpsilonExponent,
-                        Math.Log10(Math.Abs(other)) - MinimumIntervalExponentDelta)
-                );
+            var minInterval = CalculateMinInterval(other);
 
             var result = Next(other + minInterval, this.High);
 
@@ -120,15 +183,7 @@ namespace Peddler {
 
         /// <inheritdoc />
         public Double NextLessThan(Double other) {
-            // The minimum interval between floating point numbers gets larger as the values get
-            // larger.
-            var minInterval =
-                (Double)Math.Pow(
-                    10,
-                    Math.Max(
-                        EpsilonExponent,
-                        Math.Log10(Math.Abs(other)) - MinimumIntervalExponentDelta)
-                );
+            var minInterval = CalculateMinInterval(other);
 
             return Next(this.Low, other - minInterval);
         }
@@ -146,13 +201,13 @@ namespace Peddler {
         /// <param name="low">The smallest value to generate.</param>
         /// <param name="high">The largest value to generate.</param>
         /// <returns></returns>
-        private static Double Next(Double low, Double high) {
+        private Double Next(Double low, Double high) {
             var (minExp, maxExp, scales) = CalculateScales(low, high);
 
             return Next(low, high, scales, minExp, maxExp);
         }
 
-        private static (Int32 minExponent, Int32 maxExponent, List<(Int32 scale, Int32 sign)> scales) CalculateScales(
+        private (Int32 minExponent, Int32 maxExponent, List<(Int32 scale, Int32 sign)> scales) CalculateScales(
             Double low,
             Double high) {
 
@@ -257,6 +312,22 @@ namespace Peddler {
 
             var fraction = fractionMin + random.Value.NextDouble() * (fractionMax - fractionMin);
             return magnitude.sign * fraction * Math.Pow(10, magnitude.scale);
+        }
+
+        private Double CalculateMinInterval(Double value) {
+            // The minimum interval between floating point numbers gets larger as the values get
+            // larger.
+            var scale = Math.Log10(Math.Abs(value));
+            if (Double.IsNegativeInfinity(scale)) {
+                return Math.Pow(10, this.EpsilonExponent);
+            } else {
+                return Math.Pow(
+                    10,
+                    Math.Max(
+                        EpsilonExponent,
+                        (Int32)scale - (SignificantFigures - 1))
+                );
+            }
         }
     }
 }

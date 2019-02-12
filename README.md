@@ -93,6 +93,7 @@ Peddler includes implementations for many of the basic data types of the .NET Fr
 | [String](src/Peddler/StringGenerator.cs) | X | X |   | Uses [`StringComparison.Ordinal`](https://msdn.microsoft.com/en-us/library/system.stringcomparison.aspx) rules |
 | [Enum&lt;T&gt;](src/Peddler/EnumGenerator.cs) | X | X |   |   |
 | [Boolean](src/Peddler/BooleanGenerator.cs) | X | X |   |   |
+| [Color](src/Peddler/ColorGenerator.cs) | X | X |   |   |
 
 ## Wrapper Implementations
 Peddler also includes implementations that wrap around base implementations or collections in order to mutate their functionality. For example, a caller may want to periodically produce null, or convert value type `T` into `Nullable<T>`, without having to write a whole new generator. Perhaps the caller wants to generate values from a predefined set. These implementations wrap around a lower-level concept to to provide that type of functionality.

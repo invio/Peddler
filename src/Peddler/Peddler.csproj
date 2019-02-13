@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <AssemblyTitle>Data Generation for .NET</AssemblyTitle>
-    <VersionPrefix>0.13.1</VersionPrefix>
+    <VersionPrefix>0.14.0</VersionPrefix>
     <Authors>Brian Caruso &lt;brian@invioinc.com&gt;</Authors>
     <TargetFramework>netstandard2.0</TargetFramework>
     <DebugType>portable</DebugType>

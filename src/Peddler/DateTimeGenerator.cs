@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Peddler {
 
@@ -13,9 +14,10 @@ namespace Peddler {
     ///   Each <see cref="DateTime" /> is considered distinct from another by
     ///   the number of ticks used to represent its value.
     /// </remarks>
-    public class DateTimeGenerator : IIntegralGenerator<DateTime> {
+    public sealed class DateTimeGenerator : IIntegralGenerator<DateTime> {
 
-        private Int64Generator tickGenerator { get; }
+        private long ticksPerUnit { get; }
+        private Int64Generator unitsGenerator { get; }
 
         /// <summary>
         ///   The <see cref="DateTimeKind" /> that must be specified for all
@@ -42,16 +44,14 @@ namespace Peddler {
         ///   The comparison used to determine if two <see cref="DateTime" />
         ///   instances are equal in value.
         /// </summary>
-        public IEqualityComparer<DateTime> EqualityComparer { get; } =
-            new KindSensitiveDateTimeEqualityComparer();
+        public IEqualityComparer<DateTime> EqualityComparer { get; }
 
         /// <summary>
         ///   The comparison used to determine if one <see cref="DateTime" />
         ///   instance is earlier than, the same time as, or later than another
         ///   <see cref="DateTime" /> instance.
         /// </summary>
-        public IComparer<DateTime> Comparer { get; } =
-            new KindSensitiveDateTimeComparer();
+        public IComparer<DateTime> Comparer { get; }
 
         /// <summary>
         ///   Instantiates a <see cref="DateTimeGenerator" /> that can create
@@ -61,9 +61,19 @@ namespace Peddler {
         ///   <see cref="DateTime" /> objects with a <see cref="DateTimeKind" />
         ///   of <see cref="DateTimeKind.Utc" />.
         /// </summary>
-        public DateTimeGenerator() :
+        /// <param name="granularity">
+        ///   How granular generated <see cref="DateTime" /> values will be in specificity.
+        ///   For example, a <paramref name="granularity" /> of <see cref="DateTimeUnit.Day" />
+        ///   will only return dates, with all of the time values (hours, minutes, seconds,
+        ///   etc.) zeroed out. However, a <paramref name="granularity" /> of
+        ///   <see cref="DateTimeUnit.Second" /> will only zero out fractional ticks
+        ///   or milliseconds, leaving the hours, minutes, and seconds intact.
+        ///   The default is <see cref="DateTimeUnit.Tick" />.
+        /// </param>
+        public DateTimeGenerator(DateTimeUnit granularity = DateTimeUnit.Tick) :
             this(DateTime.SpecifyKind(DateTime.MinValue, DateTimeKind.Utc),
-                 DateTime.SpecifyKind(DateTime.MaxValue, DateTimeKind.Utc)) {}
+                 DateTime.SpecifyKind(DateTime.MaxValue, DateTimeKind.Utc),
+                 granularity) {}
 
         /// <summary>
         ///   Instantiates a <see cref="DateTimeGenerator" /> that can create
@@ -77,8 +87,17 @@ namespace Peddler {
         ///   Inclusively, the earliest possible <see cref="DateTime" />
         ///   that can be created by this <see cref="DateTimeGenerator" />.
         /// </param>
-        public DateTimeGenerator(DateTime low) :
-            this(low, DateTime.SpecifyKind(DateTime.MaxValue, low.Kind)) {}
+        /// <param name="granularity">
+        ///   How granular generated <see cref="DateTime" /> values will be in specificity.
+        ///   For example, a <paramref name="granularity" /> of <see cref="DateTimeUnit.Day" />
+        ///   will only return dates, with all of the time values (hours, minutes, seconds,
+        ///   etc.) zeroed out. However, a <paramref name="granularity" /> of
+        ///   <see cref="DateTimeUnit.Second" /> will only zero out fractional ticks
+        ///   or milliseconds, leaving the hours, minutes, and seconds intact.
+        ///   The default is <see cref="DateTimeUnit.Tick" />.
+        /// </param>
+        public DateTimeGenerator(DateTime low, DateTimeUnit granularity = DateTimeUnit.Tick) :
+            this(low, DateTime.SpecifyKind(DateTime.MaxValue, low.Kind), granularity) {}
 
         /// <summary>
         ///   Instantiates a <see cref="DateTimeGenerator" /> that can create
@@ -96,6 +115,15 @@ namespace Peddler {
         ///   Exclusively, the latest possible <see cref="DateTime" />
         ///   that can be created by this <see cref="DateTimeGenerator" />.
         /// </param>
+        /// <param name="granularity">
+        ///   How granular generated <see cref="DateTime" /> values will be in specificity.
+        ///   For example, a <paramref name="granularity" /> of <see cref="DateTimeUnit.Day" />
+        ///   will only return dates, with all of the time values (hours, minutes, seconds,
+        ///   etc.) zeroed out. However, a <paramref name="granularity" /> of
+        ///   <see cref="DateTimeUnit.Second" /> will only zero out fractional ticks
+        ///   or milliseconds, leaving the hours, minutes, and seconds intact.
+        ///   The default is <see cref="DateTimeUnit.Tick" />.
+        /// </param>
         /// <exception cref="ArgumentException">
         ///   Thrown when <paramref name="low" /> is later than or equal to
         ///   <paramref name="high" />.
@@ -105,7 +133,11 @@ namespace Peddler {
         ///   <paramref name="low" /> does not match the <see cref="DateTimeKind" />
         ///   specified on <paramref name="high" />.
         /// </exception>
-        public DateTimeGenerator(DateTime low, DateTime high) {
+        public DateTimeGenerator(
+            DateTime low,
+            DateTime high,
+            DateTimeUnit granularity = DateTimeUnit.Tick) {
+
             if (low.Kind != high.Kind) {
                 throw new ArgumentException(
                     $"The {typeof(DateTimeKind).Name} of '{nameof(low)}' ({low.Kind:G}) " +
@@ -123,18 +155,29 @@ namespace Peddler {
                 );
             }
 
-            this.tickGenerator = new Int64Generator(low.Ticks, high.Ticks);
+            this.ticksPerUnit = DateTimeUtilities.GetTicksPerUnit(granularity);
+
+            var lowByUnit = low.Ticks / this.ticksPerUnit;
+            if (low.Ticks % this.ticksPerUnit > 0) {
+                lowByUnit += 1L;
+            }
+
+            var highByUnit = high.Ticks / this.ticksPerUnit;
+
+            this.unitsGenerator = new Int64Generator(lowByUnit, highByUnit);
+            this.EqualityComparer = new KindSensitiveDateTimeEqualityComparer(granularity);
+            this.Comparer = new KindSensitiveDateTimeComparer(granularity);
 
             this.Kind = low.Kind;
-            this.Low = new DateTime(this.tickGenerator.Low, this.Kind);
-            this.High = new DateTime(this.tickGenerator.High, this.Kind);
+            this.Low = new DateTime(this.unitsGenerator.Low * this.ticksPerUnit, this.Kind);
+            this.High = new DateTime(this.unitsGenerator.High * this.ticksPerUnit, this.Kind);
         }
 
-        private DateTime NextImpl(Func<Int64> getNextTicks) {
-            return new DateTime(getNextTicks(), this.Kind);
+        private DateTime NextImpl(Func<Int64> getNextUnits) {
+            return new DateTime(getNextUnits() * this.ticksPerUnit, this.Kind);
         }
 
-        private DateTime NextImpl(DateTime other, Func<Int64, Int64> getNextTicks) {
+        private DateTime NextImpl(DateTime other, Func<Int64, Int64> getNextUnits) {
             if (other.Kind != this.Kind) {
                 throw new ArgumentException(
                     $"The {typeof(DateTimeKind).Name} of '{nameof(other)}' ({other.Kind:G}) " +
@@ -144,7 +187,9 @@ namespace Peddler {
                 );
             }
 
-            return this.NextImpl(() => getNextTicks(other.Ticks));
+            return this.NextImpl(
+                () => getNextUnits(other.Ticks / this.ticksPerUnit)
+            );
         }
 
         /// <summary>
@@ -160,7 +205,7 @@ namespace Peddler {
         ///   returned will be equal to the <see cref="Kind" /> property.
         /// </returns>
         public DateTime Next() {
-            return this.NextImpl(this.tickGenerator.Next);
+            return this.NextImpl(this.unitsGenerator.Next);
         }
 
         /// <summary>
@@ -200,7 +245,7 @@ namespace Peddler {
                 return this.Next();
             }
 
-            return this.NextImpl(other, this.tickGenerator.NextDistinct);
+            return this.NextImpl(other, this.unitsGenerator.NextDistinct);
         }
 
         /// <summary>
@@ -239,7 +284,7 @@ namespace Peddler {
         ///   is earlier than or equal to <paramref name="other" /> (in terms of ticks).
         /// </exception>
         public DateTime NextGreaterThan(DateTime other) {
-            return this.NextImpl(other, this.tickGenerator.NextGreaterThan);
+            return this.NextImpl(other, this.unitsGenerator.NextGreaterThan);
         }
 
         /// <summary>
@@ -278,7 +323,7 @@ namespace Peddler {
         ///   is earlier than or equal to <paramref name="other" /> (in terms of ticks).
         /// </exception>
         public DateTime NextGreaterThanOrEqualTo(DateTime other) {
-            return this.NextImpl(other, this.tickGenerator.NextGreaterThanOrEqualTo);
+            return this.NextImpl(other, this.unitsGenerator.NextGreaterThanOrEqualTo);
         }
 
         /// <summary>
@@ -317,7 +362,7 @@ namespace Peddler {
         ///   is later than or equal to <paramref name="other" /> (in terms of ticks).
         /// </exception>
         public DateTime NextLessThan(DateTime other) {
-            return this.NextImpl(other, this.tickGenerator.NextLessThan);
+            return this.NextImpl(other, this.unitsGenerator.NextLessThan);
         }
 
         /// <summary>
@@ -356,7 +401,7 @@ namespace Peddler {
         ///   is later than <paramref name="other" /> (in terms of ticks).
         /// </exception>
         public DateTime NextLessThanOrEqualTo(DateTime other) {
-            return this.NextImpl(other, this.tickGenerator.NextLessThanOrEqualTo);
+            return this.NextImpl(other, this.unitsGenerator.NextLessThanOrEqualTo);
         }
 
     }

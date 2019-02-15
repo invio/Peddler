@@ -9,6 +9,29 @@ namespace Peddler {
     /// </summary>
     public class KindSensitiveDateTimeComparer : Comparer<DateTime> {
 
+        private long ticksPerUnit { get; }
+
+        /// <summary>
+        ///   Creates an implementation of <see cref="Comparer{DateTime}" /> implementation
+        ///   that only allows comparisons of <see cref="DateTime" /> instances if they have
+        ///   the same <see cref="DateTimeKind" />.
+        /// </summary>
+        /// <param name="granularity">
+        ///   How granular the comparisons are between two <see cref="DateTime" /> values
+        ///   with the same <see cref="DateTimeKind" />. For example, a 
+        ///   <paramref name="granularity" /> of <see cref="DateTimeUnit.Day" />
+        ///   will consider any two <see cref="DateTime" /> values on the same day to be
+        ///   equivalent. However, a <paramref name="granularity" /> of
+        ///   <see cref="DateTimeUnit.Second" /> will consider any two <see cref="DateTime" />
+        ///   values for the same second to be equivalent. The default
+        ///   <paramref name="granularity" /> is <see cref="DateTimeUnit.Tick" />, which
+        ///   requires the number of ticks in each <see cref="DateTime" /> value to be
+        ///   identical in order for them to be considered equal.
+        /// </param>
+        public KindSensitiveDateTimeComparer(DateTimeUnit granularity = DateTimeUnit.Tick) {
+            this.ticksPerUnit = DateTimeUtilities.GetTicksPerUnit(granularity);
+        }
+
         /// <summary>
         ///   Verifies that the left and right are of the same <see cref="DateTimeKind" />,
         ///   then compares their internal ticks to determine if one is less than, greater
@@ -41,7 +64,8 @@ namespace Peddler {
                 );
             }
 
-            return left.CompareTo(right);
+
+            return (left.Ticks / this.ticksPerUnit).CompareTo(right.Ticks / this.ticksPerUnit);
         }
 
     }

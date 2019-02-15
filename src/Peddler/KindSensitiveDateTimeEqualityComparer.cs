@@ -9,7 +9,32 @@ namespace Peddler {
     ///   <see cref="DateTime" /> instances equal if they have the same
     ///   <see cref="DateTimeKind" />.
     /// </summary>
-    public class KindSensitiveDateTimeEqualityComparer : EqualityComparer<DateTime> {
+    public sealed class KindSensitiveDateTimeEqualityComparer : EqualityComparer<DateTime> {
+
+        private long ticksPerUnit { get; }
+
+        /// <summary>
+        ///   Creates an <see cref="Comparer{DateTime}" /> implementation that only
+        ///   considers <see cref="DateTime" /> instances equal if they have the same
+        ///   <see cref="DateTimeKind" />.
+        /// </summary>
+        /// <param name="granularity">
+        ///   How granular the comparisons are between two <see cref="DateTime" /> values
+        ///   with the same <see cref="DateTimeKind" />. For example, a
+        ///   <paramref name="granularity" /> of <see cref="DateTimeUnit.Day" />
+        ///   will consider any two <see cref="DateTime" /> values on the same day to be
+        ///   equivalent. However, a <paramref name="granularity" /> of
+        ///   <see cref="DateTimeUnit.Second" /> will consider any two <see cref="DateTime" />
+        ///   values for the same second to be equivalent. The default
+        ///   <paramref name="granularity" /> is <see cref="DateTimeUnit.Tick" />, which
+        ///   requires the number of ticks in each <see cref="DateTime" /> value to be
+        ///   identical in order for them to be considered equal.
+        /// </param>
+        public KindSensitiveDateTimeEqualityComparer(
+            DateTimeUnit granularity = DateTimeUnit.Tick) {
+
+            this.ticksPerUnit = DateTimeUtilities.GetTicksPerUnit(granularity);
+        }
 
         /// <summary>
         ///   Gets the hash code that can be used to compare <see cref="DateTime" />
@@ -27,7 +52,7 @@ namespace Peddler {
         ///   The hash code value for this <see cref="DateTime" />.
         /// </returns>
         public override int GetHashCode(DateTime input) {
-            return HashCode.From(input.Kind, input.Ticks);
+            return HashCode.From(input.Kind, input.Ticks / this.ticksPerUnit);
         }
 
         /// <summary>
@@ -48,7 +73,8 @@ namespace Peddler {
         ///   Otherwise, <code>false</code>.
         /// </returns>
         public override bool Equals(DateTime left, DateTime right) {
-            return left.Kind == right.Kind && left.Ticks == right.Ticks;
+            return left.Kind == right.Kind
+                && ((left.Ticks / this.ticksPerUnit) == (right.Ticks / this.ticksPerUnit));
         }
 
     }
